@@ -9,7 +9,7 @@ import { ICON, NAV } from '../../../config-global';
 export const StyledItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'active' && prop !== 'caption',
 })(({ active, disabled, depth, caption, theme }) => {
-  const isLight = theme.palette.mode === 'light';
+  const isLight = theme.palette.mode === 'dark';
 
   const subItem = depth !== 1;
 

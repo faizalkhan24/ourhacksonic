@@ -22,12 +22,13 @@ export default function GlobalStyles() {
           padding: 0,
           width: '100%',
           height: '100%',
-          
+          backgroundColor: '#000', // Added root background color
+          color: 'white', // Ensures text is visible on black background
         },
         '#root': {
           width: '100%',
           height: '100%',
-          
+          backgroundColor: '#000', // Ensures consistency
         },
         input: {
           '&[type=number]': {

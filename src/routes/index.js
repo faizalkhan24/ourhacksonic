@@ -1,17 +1,18 @@
-// import { Navigate, useRoutes } from 'react-router';
-// layouts
+// Import necessary components
 import { Navigate, useRoutes } from 'react-router';
 import DashboardLayout from '../layouts/dashboard';
-// config
-//
-import { AdminDashboard, ClientDashboard, Page404, UserFormPage, UserListPage } from './elements';
+
+// Import pages
+import { AdminDashboard, ClientDashboard, Page404, UserFormPage, UserListPage ,AddQuestion } from './elements';
+
+// Import paths
 import { ADMIN_PATH_DASHBOARD, CLIENT_PATH_DASHBOARD } from './paths';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   return useRoutes([
-    // Auth
+    // Admin Routes
     {
       path: ADMIN_PATH_DASHBOARD.root,
       element: <DashboardLayout />,
@@ -20,7 +21,6 @@ export default function Router() {
           index: true,
           element: <AdminDashboard />,
         },
-       
         {
           path: 'user',
           children: [
@@ -32,8 +32,13 @@ export default function Router() {
             { path: 'users/:name/edit', element: <UserFormPage /> },
           ],
         },
+        {
+          path: 'question', // Add this route for Questions
+          element: <AddQuestion />,
+        },
       ],
     },
+    // Client Routes
     {
       path: CLIENT_PATH_DASHBOARD.root,
       element: <DashboardLayout />,
@@ -48,6 +53,7 @@ export default function Router() {
         },
       ],
     },
+    // 404 & Fallback
     { path: '404', element: <Page404 /> },
     { path: '*', element: <Navigate to="/admin-dashboard" replace /> },
   ]);

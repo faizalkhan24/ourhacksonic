@@ -12,9 +12,9 @@ const ClientDashboard = () => {
     <Box sx={{ backgroundColor: "#000", minHeight: "100vh", padding: 4 }}>
       
     {/* Keyword Selector Below Header */}
-    <Box sx={{ marginTop: 2 }}>
+    {/* <Box sx={{ marginTop: 2 }}>
       <KeywordSelector selectedKeywords={selectedKeywords} setSelectedKeywords={setSelectedKeywords} />
-    </Box>
+    </Box> */}
 
     {/* Main Content */}
     <Grid container spacing={14}>

@@ -31,10 +31,11 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  question: icon('ic_question'), // Added question icon
 };
 
 const navConfig = [
-  // DASBOARD
+  // DASHBOARD
   {
     subheader: 'main',
     items: [
@@ -50,16 +51,21 @@ const navConfig = [
   {
     subheader: 'general',
     items: [
+      // {
+      //   title: 'User',
+      //   path: ADMIN_PATH_DASHBOARD.user.root,
+      //   icon: ICONS.user,
+      //   children: [
+      //     {
+      //       title: 'Users',
+      //       path: ADMIN_PATH_DASHBOARD.user.users,
+      //     },
+      //   ],
+      // },
       {
-        title: 'user',
-        path: ADMIN_PATH_DASHBOARD.user.root,
-        icon: ICONS.user,
-        children: [
-          {
-            title: 'Users',
-            path: ADMIN_PATH_DASHBOARD.user.users,
-          },
-        ],
+        title: 'Questions',
+        path: ADMIN_PATH_DASHBOARD.question, // Link directly to question.js
+        icon: ICONS.question,
       },
     ],
   },
