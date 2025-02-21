@@ -51,7 +51,7 @@ function Items({ items, isLastGroup }) {
           sx={{
             width: 24,
             height: '1px',
-            bgcolor: 'divider',
+            bgcolor: '#FFD700',
             my: '8px !important',
           }}
         />

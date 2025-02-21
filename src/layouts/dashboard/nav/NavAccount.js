@@ -15,14 +15,14 @@ const StyledRoot = styled('div')(({ theme }) => ({
   padding: theme.spacing(2, 2.5),
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
   backgroundColor: alpha(theme.palette.grey[500], 0.12),
-  color:'black'
+  color:'#FFD700'
 }));
 
 // Static JSON Data
 const userData = {
-  photoURL: '/static/images/avatar.png',
-  displayName: 'Faizal khan',
-  role: 'Developer'
+  photoURL: '/logo/oracel.png',
+  displayName: 'Oracle',
+  role: 'Role'
 };
 
 // ----------------------------------------------------------------------

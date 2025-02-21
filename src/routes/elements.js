@@ -25,10 +25,13 @@ export const Page404 = Loadable(lazy(() => import('../pages/Page404')));
 
 // ADMIN DASHBOARD START
 export const AdminDashboard = Loadable(lazy(() => import('../pages/adminDashboard')));
+export const ClientList = Loadable(lazy(() => import('../pages/adminDashboard/client/client-list')));
 
-export const UserListPage = Loadable(lazy(() => import('../pages/adminDashboard/user/list')));
-export const UserFormPage = Loadable(lazy(() => import('../pages/adminDashboard/user/form')));
+export const UserListPage = Loadable(lazy(() => import('../pages/adminDashboard/client/list')));
+export const UserFormPage = Loadable(lazy(() => import('../pages/adminDashboard/client/form')));
 export const AddQuestion = Loadable(lazy(() => import('../pages/adminDashboard/question/question')));
+export const Category = Loadable(lazy(() => import('../pages/adminDashboard/category/Category')));
+export const Widget = Loadable(lazy(() => import('../pages/adminDashboard/Widget/Widget')));
 
 // ADMIN DASHBOARD END
 

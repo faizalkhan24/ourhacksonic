@@ -17,13 +17,14 @@ const GREY = {
   900: '#161C24',
 };
 const PRIMARY = {
-  lighter: '#C8FACD',
-  light: '#5BE584',
-  main: '#00AB55',
-  dark: '#000000', // Ensuring black color
-  darker: '#000000', // Ensuring black color
-  contrastText: '#FFFFFF', // Keeping white for readability
+  lighter: '#FFF9C4',  // Light yellow for soft backgrounds
+  light: '#FFEB3B',    // Brighter yellow
+  main: '#FFD700',     // Gold/yellow as the main color
+  dark: '#000000',     // Black as the primary dark color
+  darker: '#000000',   // Ensuring deeper black if needed
+  contrastText: '#000000', // Black text for better visibility on yellow backgrounds
 };
+
 
 const SECONDARY = {
   lighter: '#D6E4FF',

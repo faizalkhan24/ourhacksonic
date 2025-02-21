@@ -21,11 +21,11 @@ const OPTIONS = [
   },
   {
     label: 'Profile',
-    linkTo: ADMIN_PATH_DASHBOARD.user.users,
+    // linkTo: ADMIN_PATH_DASHBOARD.user.users,
   },
   {
     label: 'Settings',
-    linkTo: ADMIN_PATH_DASHBOARD.user.users,
+    // linkTo: ADMIN_PATH_DASHBOARD.user.users,
   },
 ];
 
@@ -82,17 +82,17 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <CustomAvatar src={"#"} alt={"#"} name={"#"} />
+        <CustomAvatar src={"/logo/oracel.png"} alt={"#"} name={"oracle"} />
       </IconButtonAnimate>
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {"#user.name"}
+            User
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {"user?.email"}
+           User@gmail.com
           </Typography>
         </Box>
 

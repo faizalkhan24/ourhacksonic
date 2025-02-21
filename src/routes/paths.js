@@ -29,7 +29,12 @@ export const ADMIN_PATH_DASHBOARD = {
     edit: (name) => path(ADMIN_ROOTS_DASHBOARD, `/user/users/${name}/edit`),
     new: path(ADMIN_ROOTS_DASHBOARD, '/user/users/new'),
   },
+
+  category: path(ADMIN_ROOTS_DASHBOARD, '/category'), 
+  client: path(ADMIN_ROOTS_DASHBOARD, '/client'), 
   question: path(ADMIN_ROOTS_DASHBOARD, '/question'), 
+  widget: path(ADMIN_ROOTS_DASHBOARD, '/widget'), 
+
 };
 
 

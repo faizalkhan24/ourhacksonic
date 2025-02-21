@@ -37,7 +37,6 @@ const ICONS = {
 const navConfig = [
   // DASHBOARD
   {
-    subheader: 'main',
     items: [
       {
         title: 'Dashboard',
@@ -49,7 +48,7 @@ const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Setting',
     items: [
       // {
       //   title: 'User',
@@ -63,10 +62,25 @@ const navConfig = [
       //   ],
       // },
       {
+        title: 'Client List',
+        path: ADMIN_PATH_DASHBOARD.client, 
+        icon: ICONS.question,
+      },
+      {
         title: 'Questions',
         path: ADMIN_PATH_DASHBOARD.question, // Link directly to question.js
         icon: ICONS.question,
       },
+      {
+        title: 'Category',
+        path: ADMIN_PATH_DASHBOARD.category, // Link directly to question.js
+        icon: ICONS.analytics,
+      },
+      {
+        title: 'Widget',
+        path: ADMIN_PATH_DASHBOARD.widget, // Link directly to question.js
+        icon: ICONS.analytics,
+      }
     ],
   },
 ];

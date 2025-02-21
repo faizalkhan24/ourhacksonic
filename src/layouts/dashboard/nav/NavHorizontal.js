@@ -29,7 +29,7 @@ function NavHorizontal() {
       <Toolbar
         sx={{
           ...bgBlur({
-            color: theme.palette.background.default,
+            color: '#FFD700',
           }),
         }}
       >
@@ -62,7 +62,7 @@ function Shadow({ sx, ...other }) {
         m: 'auto',
         borderRadius: '50%',
         position: 'absolute',
-        boxShadow: (theme) => theme.customShadows.z8,
+        boxShadow: '#FFD700',
         ...sx,
       }}
       {...other}

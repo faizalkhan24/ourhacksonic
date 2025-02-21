@@ -3,7 +3,7 @@ import { Navigate, useRoutes } from 'react-router';
 import DashboardLayout from '../layouts/dashboard';
 
 // Import pages
-import { AdminDashboard, ClientDashboard, Page404, UserFormPage, UserListPage ,AddQuestion } from './elements';
+import { AdminDashboard, ClientDashboard, Page404, UserFormPage, UserListPage ,AddQuestion, ClientList, Category , Widget} from './elements';
 
 // Import paths
 import { ADMIN_PATH_DASHBOARD, CLIENT_PATH_DASHBOARD } from './paths';
@@ -33,8 +33,20 @@ export default function Router() {
           ],
         },
         {
+          path: "client",
+          element: <ClientList />,
+        },
+        {
           path: 'question', // Add this route for Questions
           element: <AddQuestion />,
+        },
+        {
+          path: 'category', // Add this route for Questions
+          element: <Category />,
+        },
+        {
+          path: 'widget', // Add this route for Questions
+          element: <Widget />,
         },
       ],
     },
