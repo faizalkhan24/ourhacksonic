@@ -66,11 +66,11 @@ const navConfig = [
         path: ADMIN_PATH_DASHBOARD.client, 
         icon: ICONS.question,
       },
-      {
-        title: 'Questions',
-        path: ADMIN_PATH_DASHBOARD.question, // Link directly to question.js
-        icon: ICONS.question,
-      },
+      // {
+      //   title: 'Questions',
+      //   path: ADMIN_PATH_DASHBOARD.question, // Link directly to question.js
+      //   icon: ICONS.question,
+      // },
       {
         title: 'Category',
         path: ADMIN_PATH_DASHBOARD.category, // Link directly to question.js

@@ -83,13 +83,7 @@ const ClientsTable = () => {
           >
             Edit
           </Button>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: "#FFD700", color: "#000", marginRight: 1 }}
-            onClick={() => handleOpenQuestionsModal(params.row)}
-          >
-            Questions
-          </Button>
+         
           <Button
             variant="contained"
             sx={{ backgroundColor: "#FFD700", color: "#000" }}

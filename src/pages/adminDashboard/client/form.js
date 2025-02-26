@@ -27,7 +27,7 @@ export default function UserEditPage() {
   return (
     <>
       <Helmet>
-        <title> User: {isEdit ? `Edit` : `New`} user | Minimal UI</title>
+        <title> User: {isEdit ? `Edit` : `New`} user |  </title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>

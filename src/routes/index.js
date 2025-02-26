@@ -7,6 +7,7 @@ import { AdminDashboard, ClientDashboard, Page404, UserFormPage, UserListPage ,A
 
 // Import paths
 import { ADMIN_PATH_DASHBOARD, CLIENT_PATH_DASHBOARD } from './paths';
+import ClientDashboardLayout from 'layouts/client';
 
 // ----------------------------------------------------------------------
 
@@ -36,10 +37,10 @@ export default function Router() {
           path: "client",
           element: <ClientList />,
         },
-        {
-          path: 'question', // Add this route for Questions
-          element: <AddQuestion />,
-        },
+        // {
+        //   path: 'question', // Add this route for Questions
+        //   element: <AddQuestion />,
+        // },
         {
           path: 'category', // Add this route for Questions
           element: <Category />,
@@ -53,7 +54,7 @@ export default function Router() {
     // Client Routes
     {
       path: CLIENT_PATH_DASHBOARD.root,
-      element: <DashboardLayout />,
+      element: <ClientDashboardLayout />,
       children: [
         {
           index: true,
