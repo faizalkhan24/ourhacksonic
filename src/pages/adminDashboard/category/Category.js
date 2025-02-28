@@ -59,8 +59,8 @@ const CategoryPage = () => {
   ];
 
   return (
-    <Box sx={{  margin: "auto", textAlign: "center", paddingTop: "20px" }}>
-      <h2 style={{ color: "#FFD700" }}>Manage Categories</h2>
+    <Box sx={{  margin: "auto", textAlign: "left", paddingTop: "20px" }}>
+      <h2 style={{ color: "#FFD700" }}>Manage Industry</h2>
       <AddCategory onAddCategory={addCategory} editingCategory={editingCategory} />
       <DataTable columns={columns} rows={categories} />
     </Box>

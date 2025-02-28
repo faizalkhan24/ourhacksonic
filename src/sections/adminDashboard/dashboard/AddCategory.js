@@ -33,7 +33,7 @@ const AddCategory = ({ onAddCategory, editingCategory }) => {
       }}
     >
       <TextField
-        label="Enter Category"
+        label="Enter Industry"
         variant="outlined"
         value={category}
         onChange={(e) => setCategory(e.target.value)}

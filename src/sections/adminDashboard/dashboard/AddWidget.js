@@ -54,7 +54,7 @@ const AddWidget = ({ onClose, onSaveWidget, existingWidget }) => {
 
       {/* Multi-Select Dropdown for Categories */}
       <FormControl fullWidth>
-        <InputLabel sx={{ color: "#FFD700" }}>Categories</InputLabel>
+        <InputLabel sx={{ color: "#FFD700" }}>Industry</InputLabel>
         <Select
           multiple
           value={selectedCategories}

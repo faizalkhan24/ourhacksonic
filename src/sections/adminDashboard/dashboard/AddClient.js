@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, Grid, Stack, Chip } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Grid,
+  Stack,
+  Chip,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { IconButton } from "@mui/material";
+import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 
 const AddClient = ({ onClose, onSaveClient, existingClient }) => {
   const [clientName, setClientName] = useState("");
@@ -38,10 +49,14 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
 
   // Function to handle Chip deletion
   const handleDeleteChip = (field, chipToDelete) => {
-    if (field === "customers") setCustomers(customers.filter((chip) => chip !== chipToDelete));
-    if (field === "competitors") setCompetitors(competitors.filter((chip) => chip !== chipToDelete));
-    if (field === "labels") setLabels(labels.filter((chip) => chip !== chipToDelete));
-    if (field === "industries") setIndustries(industries.filter((chip) => chip !== chipToDelete));
+    if (field === "customers")
+      setCustomers(customers.filter((chip) => chip !== chipToDelete));
+    if (field === "competitors")
+      setCompetitors(competitors.filter((chip) => chip !== chipToDelete));
+    if (field === "labels")
+      setLabels(labels.filter((chip) => chip !== chipToDelete));
+    if (field === "industries")
+      setIndustries(industries.filter((chip) => chip !== chipToDelete));
   };
 
   const handleSubmit = (e) => {
@@ -66,11 +81,12 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
+        position: "relative", // Ensure close icon can be positioned
         display: "flex",
         flexDirection: "column",
         gap: 3,
-        width: "100%",
-        maxWidth: 600,
+        width: "90%",
+        maxWidth: 900,
         margin: "auto",
         padding: 4,
         borderRadius: 2,
@@ -80,13 +96,31 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
         overflowY: "auto",
       }}
     >
-      <Typography variant="h5" fontWeight="bold" color="primary" textAlign="center">
+      {/* Close Icon */}
+      <IconButton
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+
+      {/* Title */}
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        color="primary"
+        textAlign="center"
+      >
         {existingClient ? "Edit Client Information" : "Add New Client"}
       </Typography>
 
       <Grid container spacing={2}>
         {/* Name & Email */}
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <TextField
             label="Client Name"
             variant="outlined"
@@ -96,7 +130,7 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
             onChange={(e) => setClientName(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <TextField
             label="Client Email"
             type="email"
@@ -107,16 +141,52 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
             onChange={(e) => setClientEmail(e.target.value)}
           />
         </Grid>
-
+      
+        {/* Industry Dropdown */}
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth>
+            <InputLabel>Industry</InputLabel>
+            <Select
+              value={industries}
+              onChange={(e) => setIndustries([e.target.value])} // Store selected industry
+            >
+              <MenuItem value="Technology">Technology</MenuItem>
+              <MenuItem value="Healthcare">Healthcare</MenuItem>
+              <MenuItem value="Finance">Finance</MenuItem>
+              <MenuItem value="Retail">Retail</MenuItem>
+              <MenuItem value="Education">Education</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
         {/* Dynamic Chip Inputs */}
         {[
-          { label: "Who are your customers?", field: "customers", values: customers },
-          { label: "Who are your competitors?", field: "competitors", values: competitors },
-          { label: "Labels that describe this client", field: "labels", values: labels },
-          { label: "Industry this client belongs to", field: "industries", values: industries },
+          {
+            label: "Who are your customers?",
+            field: "customers",
+            values: customers,
+          },
+          {
+            label: "Who are your competitors?",
+            field: "competitors",
+            values: competitors,
+          },
+          {
+            label: "Labels that describe this client",
+            field: "labels",
+            values: labels,
+          },
+          {
+            label: "Industry this client belongs to",
+            field: "industries",
+            values: industries,
+          },
         ].map(({ label, field, values }) => (
           <Grid item xs={12} sm={6} key={field}>
-            <Typography variant="subtitle1" fontWeight="bold" color="text.secondary">
+            <Typography
+              variant="subtitle1"
+              fontWeight="bold"
+              color="text.secondary"
+            >
               {label}
             </Typography>
             <TextField
@@ -124,7 +194,9 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
               variant="outlined"
               fullWidth
               value={inputValue[field] || ""}
-              onChange={(e) => setInputValue({ ...inputValue, [field]: e.target.value })}
+              onChange={(e) =>
+                setInputValue({ ...inputValue, [field]: e.target.value })
+              }
               onKeyDown={(event) => handleAddChip(field, event)}
             />
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
@@ -144,9 +216,9 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
 
       {/* Buttons */}
       <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
-        <Button onClick={onClose} variant="outlined" color="secondary">
+        {/* <Button onClick={onClose} variant="outlined" color="secondary">
           Cancel
-        </Button>
+        </Button> */}
         <Button type="submit" variant="contained" color="primary">
           {existingClient ? "Update Client" : "Add Client"}
         </Button>

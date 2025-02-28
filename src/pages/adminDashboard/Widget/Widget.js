@@ -1,12 +1,46 @@
 import React, { useState } from "react";
 import AddWidget from "sections/adminDashboard/dashboard/AddWidget";
 import DataTable from "components/table/DataTable";
-import { Box, IconButton, Button, Dialog, DialogTitle, DialogContent,Chip } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Chip,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const WidgetPage = () => {
-  const [widgets, setWidgets] = useState([]);
+  const [widgets, setWidgets] = useState([
+    {
+      id: 1,
+      name: "Weather Widget",
+      categories: ["Weather", "Live Updates"],
+    },
+    {
+      id: 2,
+      name: "Stock Market Tracker",
+      categories: ["Finance", "Live Updates"],
+    },
+    {
+      id: 3,
+      name: "News Feed",
+      categories: ["News", "Media"],
+    },
+    {
+      id: 4,
+      name: "To-Do List",
+      categories: ["Productivity", "Task Management"],
+    },
+    {
+      id: 5,
+      name: "Fitness Tracker",
+      categories: ["Health", "Wellness"],
+    },
+  ]);
   const [editingWidget, setEditingWidget] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
@@ -14,9 +48,7 @@ const WidgetPage = () => {
   const saveWidget = (widget) => {
     if (editingWidget) {
       // Update widget
-      setWidgets(
-        widgets.map((w) => (w.id === editingWidget.id ? widget : w))
-      );
+      setWidgets(widgets.map((w) => (w.id === editingWidget.id ? widget : w)));
       setEditingWidget(null);
     } else {
       // Add new widget
@@ -47,7 +79,11 @@ const WidgetPage = () => {
       renderCell: (params) => (
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
           {params.row.categories.map((category, index) => (
-            <Chip key={index} label={category} sx={{ backgroundColor: "#FFD700", color: "#000" }} />
+            <Chip
+              key={index}
+              label={category}
+              sx={{ backgroundColor: "#FFD700", color: "#000" }}
+            />
           ))}
         </Box>
       ),
@@ -59,10 +95,16 @@ const WidgetPage = () => {
       sortable: false,
       renderCell: (params) => (
         <>
-          <IconButton onClick={() => editWidget(params.row)} sx={{ color: "#FFD700" }}>
+          <IconButton
+            onClick={() => editWidget(params.row)}
+            sx={{ color: "#FFD700" }}
+          >
             <EditIcon />
           </IconButton>
-          <IconButton onClick={() => deleteWidget(params.row.id)} sx={{ color: "red" }}>
+          <IconButton
+            onClick={() => deleteWidget(params.row.id)}
+            sx={{ color: "red" }}
+          >
             <DeleteIcon />
           </IconButton>
         </>
@@ -71,22 +113,38 @@ const WidgetPage = () => {
   ];
 
   return (
-    <Box sx={{ width: "100%", margin: "auto", textAlign: "left", paddingTop: "20px" }}>
+    <Box
+      sx={{
+        width: "100%",
+        margin: "auto",
+        textAlign: "left",
+        paddingTop: "20px",
+      }}
+    >
       <h2 style={{ color: "#FFD700" }}>Manage Widgets</h2>
 
-      <Button onClick={() => setOpenModal(true)} variant="contained" sx={{ backgroundColor: "#FFD700", color: "#000", marginBottom: 2 }}>
+      {/* <Button onClick={() => setOpenModal(true)} variant="contained" sx={{ backgroundColor: "#FFD700", color: "#000", marginBottom: 2 }}>
         Add Widget
-      </Button>
+      </Button> */}
 
       <DataTable columns={columns} rows={widgets} />
 
       {/* Modal for Adding/Editing Widget */}
-      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="sm">
+      <Dialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle sx={{ backgroundColor: "#000", color: "#FFD700" }}>
           {editingWidget ? "Edit Widget" : "Add Widget"}
         </DialogTitle>
         <DialogContent sx={{ backgroundColor: "#000" }}>
-          <AddWidget onClose={() => setOpenModal(false)} onSaveWidget={saveWidget} existingWidget={editingWidget} />
+          <AddWidget
+            onClose={() => setOpenModal(false)}
+            onSaveWidget={saveWidget}
+            existingWidget={editingWidget}
+          />
         </DialogContent>
       </Dialog>
     </Box>
