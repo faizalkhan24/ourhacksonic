@@ -72,7 +72,7 @@ const navConfig = [
       //   icon: ICONS.question,
       // },
       {
-        title: 'Category',
+        title: 'Industry',
         path: ADMIN_PATH_DASHBOARD.category, // Link directly to question.js
         icon: ICONS.analytics,
       },

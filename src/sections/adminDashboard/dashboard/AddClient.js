@@ -7,10 +7,15 @@ import {
   Grid,
   Stack,
   Chip,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { IconButton } from "@mui/material";
-import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+
+const industryOptions = ["Technology", "Healthcare", "Finance", "Retail", "Education"];
 
 const AddClient = ({ onClose, onSaveClient, existingClient }) => {
   const [clientName, setClientName] = useState("");
@@ -41,7 +46,6 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
         if (field === "customers") setCustomers([...customers, value]);
         if (field === "competitors") setCompetitors([...competitors, value]);
         if (field === "labels") setLabels([...labels, value]);
-        if (field === "industries") setIndustries([...industries, value]);
       }
       setInputValue({ ...inputValue, [field]: "" }); // Clear input field
     }
@@ -55,8 +59,11 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
       setCompetitors(competitors.filter((chip) => chip !== chipToDelete));
     if (field === "labels")
       setLabels(labels.filter((chip) => chip !== chipToDelete));
-    if (field === "industries")
-      setIndustries(industries.filter((chip) => chip !== chipToDelete));
+  };
+
+  // Handle industry dropdown selection
+  const handleIndustryChange = (event) => {
+    setIndustries(event.target.value);
   };
 
   const handleSubmit = (e) => {
@@ -81,7 +88,7 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        position: "relative", // Ensure close icon can be positioned
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         gap: 3,
@@ -90,10 +97,10 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
         margin: "auto",
         padding: 4,
         borderRadius: 2,
-        bgcolor: "background.paper",
         boxShadow: 3,
         maxHeight: "80vh",
         overflowY: "auto",
+        // backgroundColor: "#fff",
       }}
     >
       {/* Close Icon */}
@@ -103,24 +110,16 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
           position: "absolute",
           top: 10,
           right: 10,
+          color: "black",
+          "&:hover": { color: "#FFD700" },
         }}
       >
         <CloseIcon />
       </IconButton>
 
-      {/* Title */}
-      <Typography
-        variant="h5"
-        fontWeight="bold"
-        color="primary"
-        textAlign="center"
-      >
-        {existingClient ? "Edit Client Information" : "Add New Client"}
-      </Typography>
-
       <Grid container spacing={2}>
         {/* Name & Email */}
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6}>
           <TextField
             label="Client Name"
             variant="outlined"
@@ -130,7 +129,7 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
             onChange={(e) => setClientName(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6}>
           <TextField
             label="Client Email"
             type="email"
@@ -141,23 +140,29 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
             onChange={(e) => setClientEmail(e.target.value)}
           />
         </Grid>
-      
-        {/* Industry Dropdown */}
-        <Grid item xs={12} sm={4}>
+
+        {/* Industry Multi-Select Dropdown */}
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1" fontWeight="bold" color="text.secondary">
+            Select Industries
+          </Typography>
           <FormControl fullWidth>
-            <InputLabel>Industry</InputLabel>
+            {/* <InputLabel>Industries</InputLabel> */}
             <Select
+              multiple
               value={industries}
-              onChange={(e) => setIndustries([e.target.value])} // Store selected industry
+              onChange={handleIndustryChange}
+              renderValue={(selected) => selected.join(", ")}
             >
-              <MenuItem value="Technology">Technology</MenuItem>
-              <MenuItem value="Healthcare">Healthcare</MenuItem>
-              <MenuItem value="Finance">Finance</MenuItem>
-              <MenuItem value="Retail">Retail</MenuItem>
-              <MenuItem value="Education">Education</MenuItem>
+              {industryOptions.map((industry) => (
+                <MenuItem key={industry} value={industry}>
+                  {industry}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
+
         {/* Dynamic Chip Inputs */}
         {[
           {
@@ -175,18 +180,9 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
             field: "labels",
             values: labels,
           },
-          {
-            label: "Industry this client belongs to",
-            field: "industries",
-            values: industries,
-          },
         ].map(({ label, field, values }) => (
           <Grid item xs={12} sm={6} key={field}>
-            <Typography
-              variant="subtitle1"
-              fontWeight="bold"
-              color="text.secondary"
-            >
+            <Typography variant="subtitle1" fontWeight="bold" color="text.secondary">
               {label}
             </Typography>
             <TextField
@@ -216,10 +212,26 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
 
       {/* Buttons */}
       <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
-        {/* <Button onClick={onClose} variant="outlined" color="secondary">
-          Cancel
-        </Button> */}
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          onClick={onClose}
+          variant="contained"
+          sx={{
+            backgroundColor: "#FFD700",
+            color: "#000",
+            "&:hover": { backgroundColor: "#E6C300" },
+          }}
+        >
+          Close
+        </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            backgroundColor: "#FFD700",
+            color: "#000",
+            "&:hover": { backgroundColor: "#E6C300" },
+          }}
+        >
           {existingClient ? "Update Client" : "Add Client"}
         </Button>
       </Stack>

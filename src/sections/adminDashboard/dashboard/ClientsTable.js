@@ -138,18 +138,6 @@ const ClientsTable = () => {
           ) : (
             <Typography sx={{ mt: 2 }}>No content available.</Typography>
           )}
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#FFD700",
-              color: "#000",
-              marginTop: 3,
-              width: "100%",
-            }}
-            onClick={() => setOpenModal(false)}
-          >
-            Close
-          </Button>
         </Box>
       </Modal>
     </Box>

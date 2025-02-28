@@ -19,8 +19,8 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   const logo = (
     <Box
       component="img"
-      src="/logo/oracel.png"
-      sx={{ width: 100, height: 40, cursor: 'pointer', ...sx }}
+      src="/logo/white_logo.png"
+      sx={{ width: 100, height: 20, cursor: 'pointer', ...sx }}
     />
   );
 

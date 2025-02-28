@@ -17,27 +17,27 @@ const WidgetPage = () => {
   const [widgets, setWidgets] = useState([
     {
       id: 1,
-      name: "Weather Widget",
+      name: "OPPORTUNITIES",
       categories: ["Weather", "Live Updates"],
     },
     {
       id: 2,
-      name: "Stock Market Tracker",
+      name: "STRATEGIES",
       categories: ["Finance", "Live Updates"],
     },
     {
       id: 3,
-      name: "News Feed",
+      name: "GEOPOLITICS",
       categories: ["News", "Media"],
     },
     {
       id: 4,
-      name: "To-Do List",
+      name: "CHALLENGES",
       categories: ["Productivity", "Task Management"],
     },
     {
       id: 5,
-      name: "Fitness Tracker",
+      name: "COMPETITION",
       categories: ["Health", "Wellness"],
     },
   ]);
@@ -72,44 +72,44 @@ const WidgetPage = () => {
   const columns = [
     { field: "id", headerName: "ID", width: 150 },
     { field: "name", headerName: "Widget Name", flex: 1 },
-    {
-      field: "categories",
-      headerName: "Categories",
-      flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-          {params.row.categories.map((category, index) => (
-            <Chip
-              key={index}
-              label={category}
-              sx={{ backgroundColor: "#FFD700", color: "#000" }}
-            />
-          ))}
-        </Box>
-      ),
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => (
-        <>
-          <IconButton
-            onClick={() => editWidget(params.row)}
-            sx={{ color: "#FFD700" }}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            onClick={() => deleteWidget(params.row.id)}
-            sx={{ color: "red" }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </>
-      ),
-    },
+    // {
+    //   field: "categories",
+    //   headerName: "Categories",
+    //   flex: 1,
+    //   renderCell: (params) => (
+    //     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+    //       {params.row.categories.map((category, index) => (
+    //         <Chip
+    //           key={index}
+    //           label={category}
+    //           sx={{ backgroundColor: "#FFD700", color: "#000" }}
+    //         />
+    //       ))}
+    //     </Box>
+    //   ),
+    // },
+    // {
+    //   field: "actions",
+    //   headerName: "Actions",
+    //   width: 100,
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <>
+    //       <IconButton
+    //         onClick={() => editWidget(params.row)}
+    //         sx={{ color: "#FFD700" }}
+    //       >
+    //         <EditIcon />
+    //       </IconButton>
+    //       <IconButton
+    //         onClick={() => deleteWidget(params.row.id)}
+    //         sx={{ color: "red" }}
+    //       >
+    //         <DeleteIcon />
+    //       </IconButton>
+    //     </>
+    //   ),
+    // },
   ];
 
   return (

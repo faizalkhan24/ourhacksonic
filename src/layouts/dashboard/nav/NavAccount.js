@@ -20,7 +20,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 // Static JSON Data
 const userData = {
-  photoURL: '/logo/oracel.png',
+  photoURL: '/logo//white_logo.png',
   displayName: 'Oracle',
   role: 'Role'
 };
