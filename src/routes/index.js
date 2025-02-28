@@ -68,6 +68,6 @@ export default function Router() {
     },
     // 404 & Fallback
     { path: '404', element: <Page404 /> },
-    { path: '*', element: <Navigate to="/admin-dashboard" replace /> },
+    { path: '*', element: <Navigate to={CLIENT_PATH_DASHBOARD.root} replace /> },
   ]);
 }
