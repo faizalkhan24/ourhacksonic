@@ -70,6 +70,30 @@ const ClientsTable = () => {
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Client Name", width: 200 },
     { field: "email", headerName: "Email", width: 250 },
+    { 
+      field: "customers", 
+      headerName: "Customers", 
+      width: 250, 
+      renderCell: (params) => params.row.customers?.join(", ") || "N/A" 
+    },
+    { 
+      field: "competitors", 
+      headerName: "Competitors", 
+      width: 250, 
+      renderCell: (params) => params.row.competitors?.join(", ") || "N/A" 
+    },
+    { 
+      field: "labels", 
+      headerName: "Labels", 
+      width: 250, 
+      renderCell: (params) => params.row.labels?.join(", ") || "N/A" 
+    },
+    { 
+      field: "industries", 
+      headerName: "Industries", 
+      width: 200, 
+      renderCell: (params) => params.row.industries?.join(", ") || "N/A" 
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -83,7 +107,6 @@ const ClientsTable = () => {
           >
             Edit
           </Button>
-         
           <Button
             variant="contained"
             sx={{ backgroundColor: "#FFD700", color: "#000" }}
@@ -95,6 +118,7 @@ const ClientsTable = () => {
       ),
     },
   ];
+  
 
   return (
     <Box
