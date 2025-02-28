@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Switch,
-  Button,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
+import { Box, Typography, Switch, Button, Stack } from "@mui/material";
 
-const WidgetsModal = ({ open, onClose, onAdd }) => {
+const WidgetsModal = ({ onClose, onAdd }) => {
   const [widgets, setWidgets] = useState([
     { id: 101, name: "OPPORTUNITIES", enabled: false },
     { id: 102, name: "STRATEGIES", enabled: true },
@@ -29,54 +19,83 @@ const WidgetsModal = ({ open, onClose, onAdd }) => {
   };
 
   const handleAdd = () => {
+    // You can process the selected widgets here
     const selectedWidgets = widgets.filter((widget) => widget.enabled);
     console.log("Selected Widgets:", selectedWidgets);
 
     if (onAdd) {
       onAdd(selectedWidgets); // Pass selected widgets to parent
     }
-    onClose(); // Close modal
+    onClose(); // Close the modal
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle textAlign="center">Select Widgets</DialogTitle>
-      <DialogContent>
-        {widgets.map((widget) => (
-          <Box
-            key={widget.id}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: 2,
-              borderBottom: "1px solid #FFD700",
-            }}
-          >
-            <Typography>{widget.name}</Typography>
-            <Switch
-              checked={widget.enabled}
-              onChange={() => handleToggleWidget(widget.id)}
-              sx={{
-                "& .MuiSwitch-switchBase.Mui-checked": { color: "#FFD700" },
-                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                  backgroundColor: "#FFD700",
-                },
-              }}
-            />
-          </Box>
-        ))}
-      </DialogContent>
+    <Box
+      sx={{
+        // width: "400px",
+        padding: 3,
+        // backgroundColor: "#fff",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
+    >
+      {/* <Typography variant="h6" fontWeight="bold" textAlign="center" mb={2}>
+        Select Widgets
+      </Typography> */}
 
-      <DialogActions>
-        <Button onClick={onClose} variant="outlined" color="secondary">
+      {widgets.map((widget) => (
+        <Box
+          key={widget.id}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 2,
+            borderBottom: "1px solid #FFD700",
+          }}
+        >
+          <Typography>{widget.name}</Typography>
+          <Switch
+            checked={widget.enabled}
+            onChange={() => handleToggleWidget(widget.id)}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "#FFD700",
+              },
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "#FFD700",
+              },
+            }}
+          />
+        </Box>
+      ))}
+
+      {/* Buttons Section */}
+      <Stack direction="row" spacing={2} justifyContent="center" mt={3}>
+        <Button
+          onClick={onClose}
+          variant="contained"
+          sx={{
+            backgroundColor: "#FFD700",
+            color: "#000",
+            "&:hover": { backgroundColor: "#E6C300" },
+          }}
+        >
           Close
         </Button>
-        <Button onClick={handleAdd} variant="contained" sx={{ backgroundColor: "#FFD700", color: "#000" }}>
-          Add
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          sx={{
+            backgroundColor: "#FFD700",
+            color: "#000",
+            "&:hover": { backgroundColor: "#E6C300" },
+          }}
+        >
+          Save
         </Button>
-      </DialogActions>
-    </Dialog>
+      </Stack>
+    </Box>
   );
 };
 
