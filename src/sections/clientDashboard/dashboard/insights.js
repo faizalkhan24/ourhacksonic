@@ -3,6 +3,8 @@ import { Box } from "@mui/material";
 import TransportationOpportunities from "./apisection/transportation-opportunities";
 import RollingStockOpportunities from "./apisection/rolling-stock-opportunities";
 import InfrastructureOpportunities from "./apisection/infrastructure-opportunities";
+import TechInnovationArticles from "./apisection/TechInnovationArticles";
+import TechOpportunityArticles from "./apisection/TechOpportunityArticles";
 
 const Insights = () => {
   return (
@@ -16,9 +18,11 @@ const Insights = () => {
       }}
     >
       {/* Call different opportunity components */}
-      <TransportationOpportunities />
-      <RollingStockOpportunities />
-      <InfrastructureOpportunities />
+      <TechInnovationArticles />
+      <TechOpportunityArticles />
+      {/* <TransportationOpportunities /> */}
+      {/* <RollingStockOpportunities /> */}
+      {/* <InfrastructureOpportunities /> */}
     </Box>
   );
 };
