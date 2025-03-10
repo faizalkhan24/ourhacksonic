@@ -11,7 +11,7 @@ const Dashboard = () => {
   const stats = [
     { title: "Total Clients", value: totalClients },
     { title: "Total Widgets", value: totalWidgets },
-    { title: "Total Questions", value: totalQuestions },
+    { title: "Total Industry", value: totalQuestions },
   ];
 
   return (

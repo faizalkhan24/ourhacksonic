@@ -11,7 +11,7 @@ const TechInnovationArticles = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/classify", {
+        const response = await axios.get("http://localhost:3001/classify", {
           params: { label: "tech", classification: "Innovation" },
         });
 
@@ -30,10 +30,12 @@ const TechInnovationArticles = () => {
             // details: item.CONTENT || "No Description Available",
             location: item.LABEL || "Location", // You can adjust this field
             date: item.DATE || "12/10/2000", // You can adjust this field
-            image: item.IMAGE_LINK || "/placeholder-image.png", // Default image if null
+            image: item.IMAGE_LINK || "/logo/notfound.png", // Default image if null || "/logo/notfound.png", // Default image if null
           })) || [];
 
         setArticles(data);
+
+        console.log(data)
       } catch (error) {
         setError("Error fetching tech innovation articles.");
       } finally {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddWidget from "sections/adminDashboard/dashboard/AddWidget";
 import DataTable from "components/table/DataTable";
 import {
@@ -14,35 +14,32 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const WidgetPage = () => {
-  const [widgets, setWidgets] = useState([
-    {
-      id: 1,
-      name: "OPPORTUNITIES",
-      categories: ["Weather", "Live Updates"],
-    },
-    {
-      id: 2,
-      name: "STRATEGIES",
-      categories: ["Finance", "Live Updates"],
-    },
-    {
-      id: 3,
-      name: "GEOPOLITICS",
-      categories: ["News", "Media"],
-    },
-    {
-      id: 4,
-      name: "CHALLENGES",
-      categories: ["Productivity", "Task Management"],
-    },
-    {
-      id: 5,
-      name: "COMPETITION",
-      categories: ["Health", "Wellness"],
-    },
-  ]);
+  const [widgets, setWidgets] = useState([]);
   const [editingWidget, setEditingWidget] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+
+  // Fetch widgets from the API when the component mounts
+  useEffect(() => {
+    const fetchWidgets = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/allwidgets/widgets");
+        if (!response.ok) {
+          throw new Error("Failed to fetch widgets");
+        }
+        const data = await response.json();
+        // Transform uppercase keys to lowercase keys
+        const transformedData = data.map(widget => ({
+          id: widget.ID,
+          name: widget.NAME,
+        }));
+        setWidgets(transformedData);
+      } catch (error) {
+        console.error("Error fetching widgets:", error);
+      }
+    };
+
+    fetchWidgets();
+  }, []);
 
   // Function to handle adding/updating a widget
   const saveWidget = (widget) => {
@@ -68,26 +65,10 @@ const WidgetPage = () => {
     setOpenModal(true);
   };
 
-  // Table columns with actions
+  // Define table columns
   const columns = [
-    { field: "id", headerName: "ID", width: 150 },
     { field: "name", headerName: "Widget Name", flex: 1 },
-    // {
-    //   field: "categories",
-    //   headerName: "Categories",
-    //   flex: 1,
-    //   renderCell: (params) => (
-    //     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-    //       {params.row.categories.map((category, index) => (
-    //         <Chip
-    //           key={index}
-    //           label={category}
-    //           sx={{ backgroundColor: "#FFD700", color: "#000" }}
-    //         />
-    //       ))}
-    //     </Box>
-    //   ),
-    // },
+    // Uncomment and modify the code below to add actions or other columns as needed.
     // {
     //   field: "actions",
     //   headerName: "Actions",
@@ -95,16 +76,10 @@ const WidgetPage = () => {
     //   sortable: false,
     //   renderCell: (params) => (
     //     <>
-    //       <IconButton
-    //         onClick={() => editWidget(params.row)}
-    //         sx={{ color: "#FFD700" }}
-    //       >
+    //       <IconButton onClick={() => editWidget(params.row)} sx={{ color: "#FFD700" }}>
     //         <EditIcon />
     //       </IconButton>
-    //       <IconButton
-    //         onClick={() => deleteWidget(params.row.id)}
-    //         sx={{ color: "red" }}
-    //       >
+    //       <IconButton onClick={() => deleteWidget(params.row.id)} sx={{ color: "red" }}>
     //         <DeleteIcon />
     //       </IconButton>
     //     </>
@@ -121,21 +96,12 @@ const WidgetPage = () => {
         paddingTop: "20px",
       }}
     >
-      <h2 style={{ color: "#FFD700" }}>Manage Widgets</h2>
-
-      {/* <Button onClick={() => setOpenModal(true)} variant="contained" sx={{ backgroundColor: "#FFD700", color: "#000", marginBottom: 2 }}>
-        Add Widget
-      </Button> */}
+      <h2 style={{ color: "#FFD700" }}>Assign Widgets</h2>
 
       <DataTable columns={columns} rows={widgets} />
 
       {/* Modal for Adding/Editing Widget */}
-      <Dialog
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        fullWidth
-        maxWidth="sm"
-      >
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ backgroundColor: "#000", color: "#FFD700" }}>
           {editingWidget ? "Edit Widget" : "Add Widget"}
         </DialogTitle>

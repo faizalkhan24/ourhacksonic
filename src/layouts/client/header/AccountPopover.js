@@ -82,7 +82,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <CustomAvatar src={"/logo/white_logo.png"} alt={"#"} name={"oracle"} />
+        <CustomAvatar src={"/logo/whiteandredlogo.png"} alt={"#"} name={"oracle"} />
       </IconButtonAnimate>
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>

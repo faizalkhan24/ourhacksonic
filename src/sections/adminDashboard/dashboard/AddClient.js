@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   TextField,
@@ -9,78 +10,103 @@ import {
   Chip,
   IconButton,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const industryOptions = ["Technology", "Healthcare", "Finance", "Retail", "Education"];
-
 const AddClient = ({ onClose, onSaveClient, existingClient }) => {
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+  const [labels, setLabels] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [competitors, setCompetitors] = useState([]);
-  const [labels, setLabels] = useState([]);
   const [industries, setIndustries] = useState([]);
-  const [inputValue, setInputValue] = useState({});
+  const [industryOptions, setIndustryOptions] = useState([]);
 
   useEffect(() => {
-    if (existingClient) {
-      setClientName(existingClient.name);
-      setClientEmail(existingClient.email);
-      setCustomers(existingClient.customers || []);
-      setCompetitors(existingClient.competitors || []);
-      setLabels(existingClient.labels || []);
-      setIndustries(existingClient.industries || []);
+    axios
+      .get("http://localhost:3001/api/industry/industries")
+      .then((response) => setIndustryOptions(response.data))
+      .catch((error) => console.error("Error fetching industries:", error));
+
+    if (existingClient && Object.keys(existingClient).length > 0) {
+      console.log("Populating fields with:", existingClient); // Debugging
+
+      setClientName(existingClient.client_name || "");
+      setClientEmail(existingClient.email || "");
+
+      setLabels(existingClient.label ? [...existingClient.label] : []);
+      setCustomers(existingClient.customer ? [...existingClient.customer] : []);
+      setCompetitors(
+        existingClient.competitor ? [...existingClient.competitor] : []
+      );
+      setIndustries(
+        existingClient.industry_id ? [...existingClient.industry_id] : []
+      );
+
+      console.log("Labels:", existingClient.label);
+      console.log("Customers:", existingClient.customer);
+      console.log("Competitors:", existingClient.competitor);
+      console.log("Industries:", existingClient.industry_id);
     }
   }, [existingClient]);
 
-  // Function to handle Chip addition
-  const handleAddChip = (field, event) => {
-    if (event.key === "Enter" || event.key === ",") {
-      event.preventDefault();
-      const value = event.target.value.trim();
-      if (value) {
-        if (field === "customers") setCustomers([...customers, value]);
-        if (field === "competitors") setCompetitors([...competitors, value]);
-        if (field === "labels") setLabels([...labels, value]);
+  useEffect(() => {
+    if (existingClient) {
+      setClientName(existingClient.client_name || "");
+      setClientEmail(existingClient.email || "");
+      setLabels(existingClient.label || []); // Match API field names
+      setCustomers(existingClient.customer || []);
+      setCompetitors(existingClient.competitor || []);
+      setIndustries(existingClient.industry_id || []);
+    }
+  }, [existingClient]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!clientName || !clientEmail) return;
+  
+    const clientData = {
+      client_name: clientName,
+      email: clientEmail,
+      label: labels,
+      customer: customers,
+      competitor: competitors,
+      industry_id: industries,
+    };
+  
+    try {
+      let response;
+      if (existingClient?.id) {
+        response = await axios.put(
+          `http://localhost:3001/api/clients/${existingClient.id}`,
+          clientData
+        );
+      } else {
+        response = await axios.post(
+          "http://localhost:3001/api/clients", 
+          clientData
+        );
       }
-      setInputValue({ ...inputValue, [field]: "" }); // Clear input field
+      
+      // Use the response data which contains the server-generated ID
+      onSaveClient(response.data);
+      onClose();
+    } catch (error) {
+      console.error("Error saving client:", error);
     }
   };
 
-  // Function to handle Chip deletion
-  const handleDeleteChip = (field, chipToDelete) => {
-    if (field === "customers")
-      setCustomers(customers.filter((chip) => chip !== chipToDelete));
-    if (field === "competitors")
-      setCompetitors(competitors.filter((chip) => chip !== chipToDelete));
-    if (field === "labels")
-      setLabels(labels.filter((chip) => chip !== chipToDelete));
-  };
-
-  // Handle industry dropdown selection
-  const handleIndustryChange = (event) => {
-    setIndustries(event.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!clientName || !clientEmail) return;
-
-    onSaveClient({
-      id: existingClient?.id || Date.now(),
-      name: clientName,
-      email: clientEmail,
-      customers,
-      competitors,
-      labels,
-      industries,
-    });
-
-    onClose();
+  const handleChipInput = (e, setField, field) => {
+    if (e.key === "," && e.target.value.trim()) {
+      e.preventDefault();
+      const newValue = e.target.value.trim();
+      if (!field.includes(newValue)) {
+        setField([...field, newValue]);
+      }
+      e.target.value = "";
+    }
   };
 
   return (
@@ -88,153 +114,120 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        gap: 3,
-        width: "90%",
-        maxWidth: 900,
-        margin: "auto",
-        padding: 4,
-        borderRadius: 2,
+        p: 4,
+        width: "100%",
+        maxWidth: 800,
+        mx: "auto",
         boxShadow: 3,
-        maxHeight: "80vh",
-        overflowY: "auto",
-        // backgroundColor: "#fff",
+        borderRadius: 2,
+        position: "relative",
       }}
     >
-      {/* Close Icon */}
       <IconButton
         onClick={onClose}
-        sx={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          color: "black",
-          "&:hover": { color: "#FFD700" },
-        }}
+        sx={{ position: "absolute", top: 10, right: 10 }}
       >
         <CloseIcon />
       </IconButton>
 
-      <Grid container spacing={2}>
-        {/* Name & Email */}
-        <Grid item xs={12} sm={6}>
+      <Typography variant="h6">
+        {existingClient ? "Update Client" : "Add Client"}
+      </Typography>
+
+      <Grid container spacing={2} sx={{ my: 2 }}>
+        <Grid item xs={4}>
           <TextField
             label="Client Name"
-            variant="outlined"
             fullWidth
             required
             value={clientName}
-            onChange={(e) => setClientName(e.target.value)}
+            onChange={(e) => {
+              console.log("Client Name Changed:", e.target.value);
+              setClientName(e.target.value);
+            }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={4}>
           <TextField
             label="Client Email"
             type="email"
-            variant="outlined"
             fullWidth
             required
             value={clientEmail}
             onChange={(e) => setClientEmail(e.target.value)}
           />
         </Grid>
-
-        {/* Industry Multi-Select Dropdown */}
-        <Grid item xs={12} sm={6}>
-          <Typography variant="subtitle1" fontWeight="bold" color="text.secondary">
-            Select Industries
-          </Typography>
+        <Grid item xs={4}>
           <FormControl fullWidth>
-            {/* <InputLabel>Industries</InputLabel> */}
+            <Typography variant="subtitle1">Industries</Typography>
             <Select
               multiple
               value={industries}
-              onChange={handleIndustryChange}
-              renderValue={(selected) => selected.join(", ")}
+              onChange={(e) => setIndustries(e.target.value)}
+              renderValue={(selected) =>
+                selected
+                  .map((id) => industryOptions.find((io) => io.ID === id)?.NAME)
+                  .join(", ")
+              }
             >
               {industryOptions.map((industry) => (
-                <MenuItem key={industry} value={industry}>
-                  {industry}
+                <MenuItem key={industry.ID} value={industry.ID}>
+                  {industry.NAME}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Grid>
+        {["Labels", "Customers", "Competitors"].map((fieldType, index) => {
+          const [field, setField] = {
+            Labels: [labels, setLabels],
+            Customers: [customers, setCustomers],
+            Competitors: [competitors, setCompetitors],
+          }[fieldType];
 
-        {/* Dynamic Chip Inputs */}
-        {[
-          {
-            label: "Who are your customers?",
-            field: "customers",
-            values: customers,
-          },
-          {
-            label: "Who are your competitors?",
-            field: "competitors",
-            values: competitors,
-          },
-          {
-            label: "Labels that describe this client",
-            field: "labels",
-            values: labels,
-          },
-        ].map(({ label, field, values }) => (
-          <Grid item xs={12} sm={6} key={field}>
-            <Typography variant="subtitle1" fontWeight="bold" color="text.secondary">
-              {label}
-            </Typography>
-            <TextField
-              placeholder="Type & press Enter"
-              variant="outlined"
-              fullWidth
-              value={inputValue[field] || ""}
-              onChange={(e) =>
-                setInputValue({ ...inputValue, [field]: e.target.value })
-              }
-              onKeyDown={(event) => handleAddChip(field, event)}
-            />
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-              {values.map((chip, index) => (
-                <Chip
-                  key={index}
-                  label={chip}
-                  onDelete={() => handleDeleteChip(field, chip)}
-                  color="primary"
-                  variant="outlined"
-                />
-              ))}
-            </Box>
-          </Grid>
-        ))}
+          return (
+            <Grid item xs={4} key={index}>
+              <Typography variant="subtitle1">{fieldType}</Typography>
+              <TextField
+                fullWidth
+                placeholder={`Type and press ','`}
+                onKeyDown={(e) => {
+                  if (e.key === "," && e.target.value.trim()) {
+                    e.preventDefault();
+                    const newValue = e.target.value.trim();
+                    if (!field.includes(newValue)) {
+                      setField([...field, newValue]);
+                    }
+                    e.target.value = "";
+                  }
+                }}
+              />
+              <Box sx={{ display: "flex", flexWrap: "wrap", mt: 1 }}>
+                {field.map((item, idx) => (
+                  <Chip
+                    key={idx}
+                    label={item}
+                    onDelete={() =>
+                      setField(field.filter((val) => val !== item))
+                    }
+                    sx={{ m: 0.5 }}
+                  />
+                ))}
+              </Box>
+            </Grid>
+          );
+        })}
+        <Grid item xs={12}>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button variant="outlined" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained" color="primary">
+              {existingClient ? "Update Client" : "Create Client"}
+            </Button>
+          </Stack>
+        </Grid>
       </Grid>
-
-      {/* Buttons */}
-      <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
-        <Button
-          onClick={onClose}
-          variant="contained"
-          sx={{
-            backgroundColor: "#FFD700",
-            color: "#000",
-            "&:hover": { backgroundColor: "#E6C300" },
-          }}
-        >
-          Close
-        </Button>
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{
-            backgroundColor: "#FFD700",
-            color: "#000",
-            "&:hover": { backgroundColor: "#E6C300" },
-          }}
-        >
-          {existingClient ? "Update Client" : "Add Client"}
-        </Button>
-      </Stack>
     </Box>
   );
 };

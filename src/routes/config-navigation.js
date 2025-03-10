@@ -48,7 +48,7 @@ const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'Setting',
+    subheader: 'configuration',
     items: [
       // {
       //   title: 'User',
@@ -62,7 +62,7 @@ const navConfig = [
       //   ],
       // },
       {
-        title: 'Client List',
+        title: 'Clients',
         path: ADMIN_PATH_DASHBOARD.client, 
         icon: ICONS.question,
       },

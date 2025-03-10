@@ -6,14 +6,7 @@ const List = ({ title, opportunities, noDataMessage, image }) => {
     <Box sx={{ marginBottom: 3 }}>
       {/* Title with Yellow Left Bar */}
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Box
-          sx={{
-            width: 6,
-            height: 24,
-            backgroundColor: "#FFD700",
-            marginRight: 1,
-          }}
-        />
+       
         <Typography variant="h6" fontWeight="bold" sx={{ color: "#fff" }}>
           {title}
         </Typography>

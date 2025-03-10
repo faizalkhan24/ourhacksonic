@@ -11,7 +11,7 @@ const TechGeopoliticsArticles = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/classify", {
+        const response = await axios.get(" http://localhost:3001/classify", {
           params: { label: "tech", classification: "GEOPOLITICS" },
         });
 
@@ -33,7 +33,7 @@ const TechGeopoliticsArticles = () => {
           ),
           location: item.LABEL || "Geopolitics",
           date: item.DATE || "Unknown Date",
-          image: item.IMAGE_LINK || "/placeholder-image.png", // Default image if null
+          image: item.IMAGE_LINK || "/logo/notfound.png", // Default image if null || "/placeholder-image.png", // Default image if null
         }));
 
         setArticles(data);

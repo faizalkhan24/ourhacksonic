@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import AddCategory from "sections/adminDashboard/dashboard/AddCategory";
 import DataTable from "components/table/DataTable";
 import { Box, IconButton } from "@mui/material";
@@ -9,60 +10,70 @@ const CategoryPage = () => {
   const [categories, setCategories] = useState([]);
   const [editingCategory, setEditingCategory] = useState(null);
 
-  // Function to add or update a category
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/industry/industries")
+      .then((response) => {
+        const formattedData = response.data.map((item) => ({
+          ...item,
+          id: item.ID, 
+        }));
+        setCategories(formattedData);
+      })
+      .catch((error) => console.error("Error fetching industries:", error));
+  }, []);
+
   const addCategory = (name) => {
     if (editingCategory) {
-      // Update existing category
       setCategories(
         categories.map((cat) =>
-          cat.id === editingCategory.id ? { ...cat, name } : cat
+          cat.id === editingCategory.id ? { ...cat, NAME: name } : cat
         )
       );
       setEditingCategory(null);
     } else {
-      // Add new category
-      const newCategory = { id: categories.length + 1, name };
+      const newCategory = { id: categories.length + 1, NAME: name };
       setCategories([...categories, newCategory]);
     }
   };
 
-  // Function to delete a category
   const deleteCategory = (id) => {
     setCategories(categories.filter((cat) => cat.id !== id));
   };
 
-  // Function to set a category for editing
   const editCategory = (category) => {
     setEditingCategory(category);
   };
 
-  // Define table columns with actions
   const columns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "name", headerName: "Category Name", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 150,
-      sortable: false,
-      renderCell: (params) => (
-        <>
-          <IconButton onClick={() => editCategory(params.row)} sx={{ color: "#FFD700" }}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => deleteCategory(params.row.id)} sx={{ color: "red" }}>
-            <DeleteIcon />
-          </IconButton>
-        </>
-      ),
-    },
+    { field: "NAME", headerName: "Industry Name", flex: 1 },
+    // {
+    //   field: "actions",
+    //   headerName: "Actions",
+    //   width: 150,
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <>
+    //       <IconButton onClick={() => editCategory(params.row)} sx={{ color: "#FFD700" }}>
+    //         <EditIcon />
+    //       </IconButton>
+    //       <IconButton onClick={() => deleteCategory(params.row.id)} sx={{ color: "red" }}>
+    //         <DeleteIcon />
+    //       </IconButton>
+    //     </>
+    //   ),
+    // },
   ];
 
   return (
-    <Box sx={{  margin: "auto", textAlign: "left", paddingTop: "20px" }}>
+    <Box sx={{ margin: "auto", textAlign: "left", paddingTop: "20px" }}>
       <h2 style={{ color: "#FFD700" }}>Manage Industry</h2>
-      <AddCategory onAddCategory={addCategory} editingCategory={editingCategory} />
-      <DataTable columns={columns} rows={categories} />
+      {/* <AddCategory onAddCategory={addCategory} editingCategory={editingCategory} /> */}
+      <DataTable 
+        columns={columns} 
+        rows={categories} 
+        getRowId={(row) => row.id} // Ensures ID is used as the row identifier
+      />
     </Box>
   );
 };

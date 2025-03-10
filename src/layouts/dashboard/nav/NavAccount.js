@@ -20,16 +20,17 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 // Static JSON Data
 const userData = {
-  photoURL: '/logo//white_logo.png',
-  displayName: 'Oracle',
-  role: 'Role'
+  photoURL: '/logo/whiteandredlogo.png',
+  displayName: 'Oracle'
+  // role: 'Role'
 };
 
 // ----------------------------------------------------------------------
 
 export default function NavAccount() {
   return (
-    <Link component={RouterLink} to={ADMIN_PATH_DASHBOARD.user.users} underline="none" color="inherit">
+    // <Link component={RouterLink} to={ADMIN_PATH_DASHBOARD.user.users} underline="none" color="inherit">
+    <Link  underline="none" color="inherit">
       <StyledRoot>
         <CustomAvatar src={userData.photoURL} alt={userData.displayName} name={userData.displayName} />
 

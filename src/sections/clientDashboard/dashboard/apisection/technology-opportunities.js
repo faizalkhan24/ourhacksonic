@@ -11,7 +11,7 @@ const OpportunitiesList = ({ label }) => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/opportunities?label=technology`);
+        const response = await axios.get(` http://localhost:3001/opportunities?label=technology`);
         const data = response.data.classifications?.map((item) => ({
           title: item.prediction || "Unknown",
           details: `Confidence: ${(item.confidence * 100).toFixed(2)}%`,
