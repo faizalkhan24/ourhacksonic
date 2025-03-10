@@ -140,7 +140,7 @@ const DynamicArticles = () => {
               sx={{
                 padding: 2,
                 height: 600, 
-                backgroundColor: "#222",
+                backgroundColor: "#000",
                 overflowY: "auto",
               }}
             >
