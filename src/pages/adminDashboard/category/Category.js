@@ -12,7 +12,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/industry/industries")
+      .get("http://172.210.67.200:3000/api/industry/industries")
       .then((response) => {
         const formattedData = response.data.map((item) => ({
           ...item,

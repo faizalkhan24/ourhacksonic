@@ -8,14 +8,14 @@ const WidgetsModal = ({ clientId, onClose, onAssignSuccess }) => {
   useEffect(() => {
     const fetchWidgets = async () => {
       try {
-        const assignedResponse = await fetch(`http://localhost:3001/api/allwidgets/${clientId}`);
+        const assignedResponse = await fetch(`http://172.210.67.200:3000/api/allwidgets/${clientId}`);
         if (!assignedResponse.ok) {
           throw new Error("Failed to fetch assigned widgets");
         }
         const assignedData = await assignedResponse.json();
         const assignedWidgetIds = assignedData.map(w => w.ID || w.id);
   
-        const allResponse = await fetch(`http://localhost:3001/api/allwidgets/widgets`);
+        const allResponse = await fetch(`http://172.210.67.200:3000/api/allwidgets/widgets`);
         if (!allResponse.ok) {
           throw new Error("Failed to fetch all widgets");
         }
@@ -48,7 +48,7 @@ const WidgetsModal = ({ clientId, onClose, onAssignSuccess }) => {
     // Get IDs of enabled widgets
     const selectedWidgetIds = widgets.filter(widget => widget.enabled).map(widget => widget.id);
     try {
-      const response = await fetch(`http://localhost:3001/api/allwidgets/assign`, {
+      const response = await fetch(`http://172.210.67.200:3000/api/allwidgets/assign`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

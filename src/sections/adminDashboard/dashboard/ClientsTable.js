@@ -40,7 +40,7 @@ const ClientsTable = () => {
 
   const fetchClients = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/clients");
+      const response = await fetch("http://172.210.67.200:3000/api/clients");
       const data = await response.json();
 
       const transformedClients = data.map((client) => ({
@@ -62,7 +62,7 @@ const ClientsTable = () => {
   const fetchIndustries = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/industry/industries"
+        "http://172.210.67.200:3000/api/industry/industries"
       );
       const data = await response.json();
 
@@ -96,7 +96,7 @@ const ClientsTable = () => {
     if (client) {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/clients/${client.id}`
+          `http://172.210.67.200:3000/api/clients/${client.id}`
         );
         const data = await response.json();
 
@@ -142,7 +142,7 @@ const ClientsTable = () => {
 
   const handleDeleteClient = async (clientId) => {
     try {
-      await fetch(`http://localhost:3001/api/clients/${clientId}`, {
+      await fetch(`http://172.210.67.200:3000/api/clients/${clientId}`, {
         method: "DELETE",
       });
       setClients(clients.filter((client) => client.id !== clientId));

@@ -11,7 +11,7 @@ const RollingStockOpportunities = () => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get(" http://localhost:3001/opportunities", {
+        const response = await axios.get(" http://172.210.67.200:3000/opportunities", {
           params: { label: "rolling-stock" },
         });
 

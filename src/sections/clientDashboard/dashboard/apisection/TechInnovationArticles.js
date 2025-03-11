@@ -11,7 +11,7 @@ const TechInnovationArticles = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/classify", {
+        const response = await axios.get("http://172.210.67.200:3000/classify", {
           params: { label: "tech", classification: "Innovation" },
         });
 

@@ -22,7 +22,7 @@ const WidgetPage = () => {
   useEffect(() => {
     const fetchWidgets = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/allwidgets/widgets");
+        const response = await fetch("http://172.210.67.200:3000/api/allwidgets/widgets");
         if (!response.ok) {
           throw new Error("Failed to fetch widgets");
         }

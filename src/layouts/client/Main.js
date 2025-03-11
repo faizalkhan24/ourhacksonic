@@ -20,7 +20,7 @@ export default function Main({ children, sx, ...other }) {
 
   // Call API and save response in local storage on component mount
   useEffect(() => {
-    fetch("http://localhost:3001/api/client-params/44")
+    fetch("http://172.210.67.200:3000/api/client-params/43")
       .then(response => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
