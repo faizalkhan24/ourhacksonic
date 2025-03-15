@@ -1,36 +1,3 @@
-// import React from 'react'
-// import { Box, Grid } from "@mui/material";
-// import KeywordSelector from 'sections/clientDashboard/dashboard/keyword-selector';
-// import Insights from 'sections/clientDashboard/dashboard/insights';
-// import InsightsRight from 'sections/clientDashboard/dashboard/insights-right';
-// import { useState } from "react";
-
-// const ClientDashboard = () => {
-//   const [selectedKeywords, setSelectedKeywords] = useState([]);
-
-//   return (
-//     <Box sx={{ backgroundColor: "#000", minHeight: "100vh", padding: 4 }}>
-      
-//     {/* Keyword Selector Below Header */}
-//     {/* <Box sx={{ marginTop: 2 }}>
-//       <KeywordSelector selectedKeywords={selectedKeywords} setSelectedKeywords={setSelectedKeywords} />
-//     </Box> */}
-
-//     {/* Main Content */}
-//     <Grid container spacing={14}>
-//       <Grid item xs={12} md={6}>
-//         <Insights />
-//       </Grid>
-//       <Grid item xs={12} md={6}>
-        // <InsightsRight />
-//       </Grid>
-//     </Grid>
-//   </Box>
-//   )
-// }
-
-// export default ClientDashboard
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Typography, Grid, Paper } from "@mui/material";
@@ -41,72 +8,106 @@ const DynamicArticles = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const clientParams = JSON.parse(localStorage.getItem("clientParams"));
-    if (clientParams && clientParams.label && clientParams.classifications) {
-      const { label, classifications } = clientParams;
-      const apiCalls = [];
 
-      label.forEach((l) => {
-        classifications.forEach((c) => {
-          const url = `http://4.227.190.93:3001/classify?label=${encodeURIComponent(l)}&classification=${encodeURIComponent(c)}`;
-          console.log("API URL:", url);
+useEffect(() => {
+  const pollInterval = 5000; // Check every 500ms
+  const maxWaitTime = 50000; // Wait up to 5 seconds
+  let elapsedTime = 0;
 
-          apiCalls.push(
-            axios
-              .get(url)
-              .then((response) => {
-                const uniqueArticles = Array.from(
-                  new Map(response.data.map((item) => [item.LINK, item])).values()
-                );
-                const data = uniqueArticles.map((item) => ({
-                  title: (
-                    <a
-                      href={item.LINK || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        textDecoration: "none",
-                        color: "#fff",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {item.TITLE || "No Title"}
-                    </a>
-                  ),
-                  location: item.LABEL || "Technology",
-                  date: item.DATE || "Unknown Date",
-                  image: item.IMAGE_LINK || "/logo/notfound.png",
-                }));
-                return { label: l, classification: c, articles: data };
-              })
-              .catch((err) => {
-                console.error("Error fetching articles for", l, "-", c, ":", err);
-                return {
-                  label: l,
-                  classification: c,
-                  error: `Error fetching articles for ${l} - ${c}: ${err.message}`,
-                };
-              })
-          );
+  // Poll localStorage until clientParams is available
+  const intervalId = setInterval(() => {
+    const storedParams = localStorage.getItem("clientParams");
+    if (storedParams) {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+      const clientParams = JSON.parse(storedParams);
+      if (clientParams && clientParams.label && clientParams.classifications) {
+        const { label, classifications } = clientParams;
+        const apiCalls = [];
+
+        label.forEach((l) => {
+          classifications.forEach((c) => {
+            const url = `http://4.227.190.93:3001/classify?label=${encodeURIComponent(
+              l
+            )}&classification=${encodeURIComponent(c)}`;
+            console.log("API URL:", url);
+
+            apiCalls.push(
+              axios
+                .get(url)
+                .then((response) => {
+                  const uniqueArticles = Array.from(
+                    new Map(response.data.map((item) => [item.LINK, item])).values()
+                  );
+                  const data = uniqueArticles.map((item) => ({
+                    title: (
+                      <a
+                        href={item.LINK || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          textDecoration: "none",
+                          color: "#fff",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {item.TITLE || "No Title"}
+                      </a>
+                    ),
+                    location: item.LABEL || "Technology",
+                    date: item.DATE || "Unknown Date",
+                    image: item.IMAGE_LINK || "/logo/notfound.png",
+                  }));
+                  return { label: l, classification: c, articles: data };
+                })
+                .catch((err) => {
+                  console.error("Error fetching articles for", l, "-", c, ":", err);
+                  return {
+                    label: l,
+                    classification: c,
+                    error: `Error fetching articles for ${l} - ${c}: ${err.message}`,
+                  };
+                })
+            );
+          });
         });
-      });
 
-      Promise.all(apiCalls)
-        .then((results) => {
-          setArticlesByAPI(results);
-        })
-        .catch((err) => {
-          setError("Error fetching articles.");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        Promise.all(apiCalls)
+          .then((results) => {
+            setArticlesByAPI(results);
+          })
+          .catch((err) => {
+            setError("Error fetching articles.");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        setLoading(false);
+        setError("Invalid client parameters found in local storage.");
+      }
     } else {
-      setLoading(false);
-      setError("No client parameters found in local storage.");
+      elapsedTime += pollInterval;
+      if (elapsedTime >= maxWaitTime) {
+        clearInterval(intervalId);
+        setLoading(false);
+        setError("No client parameters found in local storage after waiting.");
+      }
     }
-  }, []);
+  }, pollInterval);
+
+  // Fallback timeout (just in case)
+  const timeoutId = setTimeout(() => {
+    clearInterval(intervalId);
+    setLoading(false);
+    setError("No client parameters found in local storage after waiting.");
+  }, maxWaitTime);
+
+  return () => {
+    clearInterval(intervalId);
+    clearTimeout(timeoutId);
+  };
+}, []);
 
   if (loading) {
     return (

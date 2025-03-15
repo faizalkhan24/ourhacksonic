@@ -61,11 +61,16 @@ export default function Router() {
           element: <ClientDashboard />,
         },
         {
+          path: ':id', // This route matches URLs like "/client-dashboard/44"
+          element: <ClientDashboard />, // You can use the same component or a different one if needed
+        },
+        {
           path: CLIENT_PATH_DASHBOARD.user.users,
           element: <AdminDashboard />,
         },
       ],
     },
+
     // 404 & Fallback
     { path: '404', element: <Page404 /> },
     { path: '*', element: <Navigate to={CLIENT_PATH_DASHBOARD.root} replace /> },

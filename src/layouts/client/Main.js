@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Get ID from URL
+import { useParams } from 'react-router'; // Get ID from URL
 import useResponsive from '../../hooks/useResponsive';
 import { HEADER, NAV } from '../../config-global';
 import { useSettingsContext } from '../../components/settings';
@@ -26,10 +26,8 @@ export default function Main({ children, sx, ...other }) {
     if (id) {
       console.log(`🔄 Fetching new data for ID: ${id}`);
 
-      // Step 1: Clear old localStorage before making a new request
       localStorage.removeItem("clientParams");
 
-      // Step 2: Fetch new data
       fetch(`http://4.227.190.93:3001/api/client-params/${id}`)
         .then(response => {
           if (!response.ok) {
@@ -40,20 +38,12 @@ export default function Main({ children, sx, ...other }) {
         .then(data => {
           console.log("✅ New data received:", data);
 
-          // Step 3: Update state first
           setClientParams(data);
-
-          // Step 4: Store in localStorage
           localStorage.setItem("clientParams", JSON.stringify(data));
         })
         .catch(error => console.error("⚠️ Error fetching client params:", error));
     }
   }, [id]); // Runs every time `id` changes
-
-  // Debugging: Log localStorage changes
-  useEffect(() => {
-    console.log("📦 LocalStorage Updated:", localStorage.getItem("clientParams"));
-  }, [clientParams]);
 
   if (isNavHorizontal) {
     return (
