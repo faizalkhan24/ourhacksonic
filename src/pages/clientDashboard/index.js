@@ -56,7 +56,7 @@ useEffect(() => {
                     ),
                     location: item.LABEL || "Technology",
                     date: item.DATE || "Unknown Date",
-                    image: item.IMAGE_LINK || "/logo/notfound.png",
+image: (!item.IMAGE_LINK || item.IMAGE_LINK === "#") ? "/logo/notfound.png" : item.IMAGE_LINK,
                   }));
                   return { label: l, classification: c, articles: data };
                 })
