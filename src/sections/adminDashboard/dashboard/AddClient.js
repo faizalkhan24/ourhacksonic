@@ -26,7 +26,7 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
 
   useEffect(() => {
     axios
-      .get("http://172.210.67.200:3000/api/industry/industries")
+      .get("http://4.227.190.93:3001/api/industry/industries")
       .then((response) => setIndustryOptions(response.data))
       .catch((error) => console.error("Error fetching industries:", error));
 
@@ -80,12 +80,12 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
       let response;
       if (existingClient?.id) {
         response = await axios.put(
-          `http://172.210.67.200:3000/api/clients/${existingClient.id}`,
+          `http://4.227.190.93:3001/api/clients/${existingClient.id}`,
           clientData
         );
       } else {
         response = await axios.post(
-          "http://172.210.67.200:3000/api/clients", 
+          "http://4.227.190.93:3001/api/clients", 
           clientData
         );
       }

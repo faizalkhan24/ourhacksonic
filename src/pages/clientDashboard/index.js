@@ -49,7 +49,7 @@ const DynamicArticles = () => {
 
       label.forEach((l) => {
         classifications.forEach((c) => {
-          const url = `http://172.210.67.200:3000/classify?label=${encodeURIComponent(l)}&classification=${encodeURIComponent(c)}`;
+          const url = `http://4.227.190.93:3001/classify?label=${encodeURIComponent(l)}&classification=${encodeURIComponent(c)}`;
           console.log("API URL:", url);
 
           apiCalls.push(
