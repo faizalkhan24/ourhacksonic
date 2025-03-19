@@ -31,7 +31,7 @@ const DynamicArticles = () => {
 
       // Handle Sentiment separately so it's only called once.
       if (classifications.includes("Sentiment")) {
-        console.log("Fetching Sentiment Data...");
+        // console.log("Fetching Sentiment Data...");
         const sentimentAPIs = [
           {
             url: `${apiUrl}/sentiment?industry=tech&type=positive`,
@@ -64,6 +64,7 @@ const DynamicArticles = () => {
                       textDecoration: "none",
                       color: "#fff",
                       fontWeight: "bold",
+                      
                     }}
                   >
                     {item.TITLE || "No Title"}
@@ -222,7 +223,9 @@ const DynamicArticles = () => {
                   padding: 2,
                   height: 700,
                   backgroundColor: "#000",
+                  border: "1px solid #fff",
                   overflowY: "auto",
+                  
                 }}
               >
                 <Typography variant="h6" sx={{ display: "flex", gap: 2 }}>
@@ -243,10 +246,10 @@ const DynamicArticles = () => {
                     style={{
                       color: "#fff",
                       fontSize: "16px",
-                      fontWeight: "bold",
+                      fontWeight: "bold", 
                     }}
                   >
-                    Total news: {item.articles.length}
+                    {/* Total news: {item.articles.length} */}
                   </span>
                 </Typography>
 

@@ -115,7 +115,7 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        p: 4,
+        // p: 4,
         width: "100%",
         maxWidth: 800,
         mx: "auto",
@@ -131,9 +131,9 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
         <CloseIcon />
       </IconButton>
 
-      <Typography variant="h6">
+      {/* <Typography variant="h6">
         {existingClient ? "Update Client" : "Add Client"}
-      </Typography>
+      </Typography> */}
 
       <Grid container spacing={2} sx={{ my: 2 }}>
         <Grid item xs={4}>
@@ -220,10 +220,10 @@ const AddClient = ({ onClose, onSaveClient, existingClient }) => {
         })}
         <Grid item xs={12}>
           <Stack direction="row" spacing={2} justifyContent="center">
-            <Button variant="outlined" onClick={onClose}>
+            <Button  onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" variant="contained" color="primary">
+            <Button type="submit"  color="primary">
               {existingClient ? "Update Client" : "Create Client"}
             </Button>
           </Stack>
