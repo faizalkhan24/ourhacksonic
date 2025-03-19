@@ -11,7 +11,7 @@ const InfrastructureOpportunities = () => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get(" http://4.227.190.93:3001/opportunities", {
+        const response = await axios.get(`${apiUrl}/opportunities`, {
           params: { label: "infrastructure" },
         });
 

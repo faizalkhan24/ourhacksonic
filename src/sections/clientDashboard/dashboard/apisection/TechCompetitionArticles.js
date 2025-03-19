@@ -11,7 +11,7 @@ const TechCompetitionArticles = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get(" http://4.227.190.93:3001/classify", {
+        const response = await axios.get(`${apiUrl}/classify`, {
           params: { label: "tech", classification: "Competition" },
         });
 

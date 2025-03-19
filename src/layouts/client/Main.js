@@ -19,8 +19,13 @@ export default function Main({ children, sx, ...other }) {
   const isNavMini = themeLayout === 'mini';
   const isDesktop = useResponsive('up', 'lg');
 
-  const { id } = useParams(); // Get ID from URL
-  const [clientParams, setClientParams] = useState(null); // Store fetched data
+
+const apiUrl = process.env.REACT_APP_APIBASEURL;
+console.log("API URL client layout:", apiUrl);
+
+  
+  const { id } = useParams(); 
+  const [clientParams, setClientParams] = useState(null); 
 
   useEffect(() => {
     if (id) {
@@ -28,13 +33,13 @@ export default function Main({ children, sx, ...other }) {
 
       localStorage.removeItem("clientParams");
 
-      fetch(`http://4.227.190.93:3001/api/client-params/${id}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("❌ Network response was not ok");
-          }
-          return response.json();
-        })
+      fetch(`${apiUrl}/api/client-params/${id}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("❌ Network response was not ok");
+        }
+        return response.json();
+      })
         .then(data => {
           console.log("✅ New data received:", data);
 
@@ -43,7 +48,7 @@ export default function Main({ children, sx, ...other }) {
         })
         .catch(error => console.error("⚠️ Error fetching client params:", error));
     }
-  }, [id]); // Runs every time `id` changes
+  }, [id]); 
 
   if (isNavHorizontal) {
     return (

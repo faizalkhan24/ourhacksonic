@@ -2,119 +2,121 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Typography, Grid, Paper } from "@mui/material";
 import List from "components/Opportunities/list"; 
+import Loader from "components/Loader/Loader"; // Adjust path if needed
 
 const DynamicArticles = () => {
   const [articlesByAPI, setArticlesByAPI] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.REACT_APP_APIBASEURL;
 
+  useEffect(() => {
+    const pollInterval = 5000; // Check every 500ms
+    const maxWaitTime = 50000; // Wait up to 5 seconds
+    let elapsedTime = 0;
 
-useEffect(() => {
-  const pollInterval = 5000; // Check every 500ms
-  const maxWaitTime = 50000; // Wait up to 5 seconds
-  let elapsedTime = 0;
+    const fetchArticles = () => {
+      const storedParams = localStorage.getItem("clientParams");
+      if (!storedParams) return null;
+      
+      const clientParams = JSON.parse(storedParams);
+      if (!clientParams?.label || !clientParams?.classifications) {
+        setLoading(false);
+        setError("Invalid client parameters.");
+        return;
+      }
 
-  // Poll localStorage until clientParams is available
-  const intervalId = setInterval(() => {
-    const storedParams = localStorage.getItem("clientParams");
-    if (storedParams) {
+      const { label, classifications } = clientParams;
+      const apiCalls = [];
+
+      label.forEach((l) => {
+        classifications.forEach((c) => {
+          const url = `${apiUrl}/classify?label=${encodeURIComponent(l)}&classification=${encodeURIComponent(c)}`;
+          console.log("API URL:", url);
+
+          apiCalls.push(
+            axios.get(url)
+              .then((response) => {
+                console.log(response.data);
+
+                // Flatten and remove duplicates
+                const flattenedArticles = response.data.flat();
+                const uniqueArticles = Array.from(
+                  new Map(flattenedArticles.map((item) => [item.LINK, item])).values()
+                );
+
+                const data = uniqueArticles.map((item) => ({
+                  title: (
+                    <a
+                      href={item.LINK || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        textDecoration: "none",
+                        color: "#fff",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {item.TITLE || "No Title"}
+                    </a>
+                  ),
+                  location: item.LABEL || "No LABEL",
+                  classification: item.CLASSIFICATION || "Unclassified",
+                  industry: item.INDUSTRY || "Unknown Industry",
+                  date: item.DATE || "Unknown Date",
+                  image: item.IMAGE_LINK && item.IMAGE_LINK !== "#" ? item.IMAGE_LINK : "/logo/notfound.png",
+                }));
+
+                return { label: l, classification: c, articles: data };
+              })
+              .catch((err) => {
+                console.error(`Error fetching articles for ${l} - ${c}:`, err);
+                return {
+                  label: l,
+                  classification: c,
+                  error: `Error fetching articles: ${err.message}`,
+                };
+              })
+          );
+        });
+      });
+
+      Promise.all(apiCalls)
+        .then((results) => setArticlesByAPI(results))
+        .catch(() => setError("Error fetching articles."))
+        .finally(() => setLoading(false));
+    };
+
+    const intervalId = setInterval(() => {
+      if (localStorage.getItem("clientParams")) {
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+        fetchArticles();
+      } else {
+        elapsedTime += pollInterval;
+        if (elapsedTime >= maxWaitTime) {
+          clearInterval(intervalId);
+          setLoading(false);
+          setError("No client parameters found.");
+        }
+      }
+    }, pollInterval);
+
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+      setLoading(false);
+      setError("No client parameters found.");
+    }, maxWaitTime);
+
+    return () => {
       clearInterval(intervalId);
       clearTimeout(timeoutId);
-      const clientParams = JSON.parse(storedParams);
-      if (clientParams && clientParams.label && clientParams.classifications) {
-        const { label, classifications } = clientParams;
-        const apiCalls = [];
+    };
+  }, []);
 
-        label.forEach((l) => {
-          classifications.forEach((c) => {
-            const url = `http://4.227.190.93:3001/classify?label=${encodeURIComponent(
-              l
-            )}&classification=${encodeURIComponent(c)}`;
-            console.log("API URL:", url);
-
-            apiCalls.push(
-              axios
-                .get(url)
-                .then((response) => {
-                  const uniqueArticles = Array.from(
-                    new Map(response.data.map((item) => [item.LINK, item])).values()
-                  );
-                  const data = uniqueArticles.map((item) => ({
-                    title: (
-                      <a
-                        href={item.LINK || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          textDecoration: "none",
-                          color: "#fff",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {item.TITLE || "No Title"}
-                      </a>
-                    ),
-                    location: item.LABEL || "Technology",
-                    date: item.DATE || "Unknown Date",
-image: (!item.IMAGE_LINK || item.IMAGE_LINK === "#") ? "/logo/notfound.png" : item.IMAGE_LINK,
-                  }));
-                  return { label: l, classification: c, articles: data };
-                })
-                .catch((err) => {
-                  console.error("Error fetching articles for", l, "-", c, ":", err);
-                  return {
-                    label: l,
-                    classification: c,
-                    error: `Error fetching articles for ${l} - ${c}: ${err.message}`,
-                  };
-                })
-            );
-          });
-        });
-
-        Promise.all(apiCalls)
-          .then((results) => {
-            setArticlesByAPI(results);
-          })
-          .catch((err) => {
-            setError("Error fetching articles.");
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      } else {
-        setLoading(false);
-        setError("Invalid client parameters found in local storage.");
-      }
-    } else {
-      elapsedTime += pollInterval;
-      if (elapsedTime >= maxWaitTime) {
-        clearInterval(intervalId);
-        setLoading(false);
-        setError("No client parameters found in local storage after waiting.");
-      }
-    }
-  }, pollInterval);
-
-  // Fallback timeout (just in case)
-  const timeoutId = setTimeout(() => {
-    clearInterval(intervalId);
-    setLoading(false);
-    setError("No client parameters found in local storage after waiting.");
-  }, maxWaitTime);
-
-  return () => {
-    clearInterval(intervalId);
-    clearTimeout(timeoutId);
-  };
-}, []);
-
+  
   if (loading) {
-    return (
-      <Box sx={{ padding: "16px", backgroundColor: "#000", color: "#fff", minHeight: "100vh" }}>
-        <Typography variant="h6">Loading Articles...</Typography>
-      </Box>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -165,7 +167,7 @@ image: (!item.IMAGE_LINK || item.IMAGE_LINK === "#") ? "/logo/notfound.png" : it
               </Typography>
               {item.error ? (
                 <Typography sx={{ color: "#fff" }}>{item.error}</Typography>
-              ) : item.articles && item.articles.length > 0 ? (
+              ) : item.articles?.length > 0 ? (
                 <List
                   opportunities={item.articles}
                   noDataMessage="No articles available for this category."

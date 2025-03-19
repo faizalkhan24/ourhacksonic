@@ -4,18 +4,19 @@ import { Box, Typography, Switch, Button, Stack } from "@mui/material";
 
 const WidgetsModal = ({ clientId, onClose, onAssignSuccess }) => {
   const [widgets, setWidgets] = useState([]);
-
+  const apiUrl = process.env.REACT_APP_APIBASEURL;
+ 
   useEffect(() => {
     const fetchWidgets = async () => {
       try {
-        const assignedResponse = await fetch(`http://4.227.190.93:3001/api/allwidgets/${clientId}`);
+        const assignedResponse = await fetch(`${apiUrl}/api/allwidgets/${clientId}`);
         if (!assignedResponse.ok) {
           throw new Error("Failed to fetch assigned widgets");
         }
         const assignedData = await assignedResponse.json();
         const assignedWidgetIds = assignedData.map(w => w.ID || w.id);
   
-        const allResponse = await fetch(`http://4.227.190.93:3001/api/allwidgets/widgets`);
+        const allResponse = await fetch(`${apiUrl}/api/allwidgets/widgets`);
         if (!allResponse.ok) {
           throw new Error("Failed to fetch all widgets");
         }
@@ -48,7 +49,7 @@ const WidgetsModal = ({ clientId, onClose, onAssignSuccess }) => {
     // Get IDs of enabled widgets
     const selectedWidgetIds = widgets.filter(widget => widget.enabled).map(widget => widget.id);
     try {
-      const response = await fetch(`http://4.227.190.93:3001/api/allwidgets/assign`, {
+      const response = await fetch(`${apiUrl}/api/allwidgets/assign`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

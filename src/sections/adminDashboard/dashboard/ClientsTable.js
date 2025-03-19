@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Modal, Button, IconButton } from "@mui/material";
+import { Box, Typography, Modal, Button, IconButton,CircularProgress } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WidgetsModal from "./WidgetsModal";
 import AddClient from "./AddClient";
@@ -32,7 +32,11 @@ const ClientsTable = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ Add loading state
 
+  const apiUrl = process.env.REACT_APP_APIBASEURL;
+
+ 
   useEffect(() => {
     fetchClients();
     fetchIndustries();
@@ -40,9 +44,8 @@ const ClientsTable = () => {
 
   const fetchClients = async () => {
     try {
-      const response = await fetch("http://4.227.190.93:3001/api/clients");
+      const response = await fetch(`${apiUrl}/api/clients`);
       const data = await response.json();
-
       const transformedClients = data.map((client) => ({
         id: client.id,
         name: client.client_name,
@@ -56,13 +59,15 @@ const ClientsTable = () => {
       setClients(transformedClients);
     } catch (error) {
       console.error("Error fetching clients:", error);
+    } finally {
+      setLoading(false); // ✅ Stop loading after fetching data
     }
   };
 
   const fetchIndustries = async () => {
     try {
       const response = await fetch(
-        "http://4.227.190.93:3001/api/industry/industries"
+        `${apiUrl}/api/industry/industries`
       );
       const data = await response.json();
 
@@ -96,7 +101,7 @@ const ClientsTable = () => {
     if (client) {
       try {
         const response = await fetch(
-          `http://4.227.190.93:3001/api/clients/${client.id}`
+          `${apiUrl}/api/clients/${client.id}`
         );
         const data = await response.json();
 
@@ -117,6 +122,7 @@ const ClientsTable = () => {
     }
     setOpenModal(true);
   };
+  
   const handleSaveClient = (clientData) => {
     const transformedClient = {
       id: clientData.id,
@@ -127,7 +133,7 @@ const ClientsTable = () => {
       competitors: clientData.competitor || [],
       industries: clientData.industry_id || [],
     };
-
+  
     if (clientData.id) {
       setClients(
         clients.map((client) =>
@@ -137,15 +143,20 @@ const ClientsTable = () => {
     } else {
       setClients([...clients, transformedClient]);
     }
+  
     setSelectedClient(null);
+    setOpenModal(false);
+    fetchClients(); // ✅ Fetch updated data
   };
 
   const handleDeleteClient = async (clientId) => {
     try {
-      await fetch(`http://4.227.190.93:3001/api/clients/${clientId}`, {
+      await fetch(`${apiUrl}/api/clients/${clientId}`, {
         method: "DELETE",
       });
       setClients(clients.filter((client) => client.id !== clientId));
+      fetchClients(); // ✅ Fetch updated data after delete
+
     } catch (error) {
       console.error("Error deleting client:", error);
     }
@@ -246,11 +257,31 @@ const ClientsTable = () => {
         Add Client
       </Button>
 
-      <DataTable
+      <Box sx={{ position: "relative", minHeight: "300px" }}>
+        {loading && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              zIndex: 1,
+            }}
+          >
+            <CircularProgress color="primary" />
+          </Box>
+        )}
+        {!loading && <DataTable columns={columns} rows={clients} getRowId={(row) => row.id} />}
+      </Box>
+
+
+      {/* <DataTable
         columns={columns}
         rows={clients}
         getRowId={(row) => row.id} // Add this prop
-      />
+      /> */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box sx={modalStyle}>
           <Typography variant="h6">{modalTitle}</Typography>

@@ -6,7 +6,10 @@ import { MotionLazyContainer } from './components/animate';
 import ThemeProvider from './theme';
 import SnackbarProvider from './components/snackbar';
 
+
 function App() {
+
+
   return (
     <HelmetProvider>
       <SettingsProvider>
