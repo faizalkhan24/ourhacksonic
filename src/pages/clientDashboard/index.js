@@ -11,8 +11,8 @@ const DynamicArticles = () => {
   const apiUrl = process.env.REACT_APP_APIBASEURL;
 
   useEffect(() => {
-    const pollInterval = 5000; // Check every 500ms
-    const maxWaitTime = 50000; // Wait up to 5 seconds
+    const pollInterval = 5000; // Check every 5 seconds
+    const maxWaitTime = 50000; // Wait up to 50 seconds
     let elapsedTime = 0;
 
     const fetchArticles = async () => {
@@ -29,74 +29,124 @@ const DynamicArticles = () => {
       const { label, classifications } = clientParams;
       const apiCalls = [];
 
+      // Handle Sentiment separately so it's only called once.
+      if (classifications.includes("Sentiment")) {
+        console.log("Fetching Sentiment Data...");
+        const sentimentAPIs = [
+          {
+            url: `${apiUrl}/sentiment?industry=tech&type=positive`,
+            type: "Positive Sentiment",
+            arrow: "↑",
+            color: "#4caf50",
+          },
+          {
+            url: `${apiUrl}/sentiment?industry=tech&type=negative`,
+            type: "Negative Sentiment",
+            arrow: "↓",
+            color: "red",
+          },
+        ];
+
+        sentimentAPIs.forEach(({ url, type, arrow, color }) => {
+          apiCalls.push(
+            axios.get(url).then((response) => ({
+              label: type, // using the sentiment type as the label
+              classification: type,
+              arrow,
+              color,
+              articles: response.data.map((item) => ({
+                title: (
+                  <a
+                    href={item.LINK || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      textDecoration: "none",
+                      color: "#fff",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {item.TITLE || "No Title"}
+                  </a>
+                ),
+                location: item.LABEL || "No LABEL",
+                classification: type,
+                industry: item.INDUSTRY || "Unknown Industry",
+                date: item.DATE || "Unknown Date",
+                image:
+                  item.IMAGE_LINK && item.IMAGE_LINK !== "#"
+                    ? item.IMAGE_LINK
+                    : "/logo/notfound.png",
+              })),
+            }))
+          );
+        });
+      }
+
+      // For other classifications, iterate over each label.
       for (const l of label) {
         for (const c of classifications) {
-          const url = `${apiUrl}/classify?label=${encodeURIComponent(
-            l
-          )}&classification=${encodeURIComponent(c)}`;
-          console.log("API URL:", url);
+          if (c !== "Sentiment") {
+            const url = `${apiUrl}/classify?label=${encodeURIComponent(
+              l
+            )}&classification=${encodeURIComponent(c)}`;
+            console.log("API URL:", url);
 
-          apiCalls.push(
-            axios
-              .get(url)
-              .then((response) => {
-                console.log(response.data);
+            apiCalls.push(
+              axios
+                .get(url)
+                .then((response) => {
+                  // Flatten the data and remove duplicates.
+                  const flattenedArticles = response.data.flat();
+                  const uniqueArticles = Array.from(
+                    new Map(
+                      flattenedArticles.map((item) => [item.LINK, item])
+                    ).values()
+                  );
 
-                // Flatten and remove duplicates
-                const flattenedArticles = response.data.flat();
-                const uniqueArticles = Array.from(
-                  new Map(
-                    flattenedArticles.map((item) => [item.LINK, item])
-                  ).values()
-                );
+                  if (uniqueArticles.length === 0) return null;
 
-                // If there are no articles, return null to filter later
-                if (uniqueArticles.length === 0) return null;
-
-                return {
-                  label: l,
-                  classification: c,
-                  articles: uniqueArticles.map((item) => ({
-                    title: (
-                      <a
-                        href={item.LINK || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          textDecoration: "none",
-                          color: "#fff",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {item.TITLE || "No Title"}
-                      </a>
-                    ),
-                    location: item.LABEL || "No LABEL",
-                    classification: item.CLASSIFICATION || "Unclassified",
-                    industry: item.INDUSTRY || "Unknown Industry",
-                    date: item.DATE || "Unknown Date",
-                    image:
-                      item.IMAGE_LINK && item.IMAGE_LINK !== "#"
-                        ? item.IMAGE_LINK
-                        : "/logo/notfound.png",
-                  })),
-                };
-              })
-              .catch((err) => {
-                console.error(`Error fetching articles for ${l} - ${c}:`, err);
-                return null; // Ignore failed requests
-              })
-          );
+                  return {
+                    label: l,
+                    classification: c,
+                    articles: uniqueArticles.map((item) => ({
+                      title: (
+                        <a
+                          href={item.LINK || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            textDecoration: "none",
+                            color: "#fff",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {item.TITLE || "No Title"}
+                        </a>
+                      ),
+                      location: item.LABEL || "No LABEL",
+                      classification: item.CLASSIFICATION || "Unclassified",
+                      industry: item.INDUSTRY || "Unknown Industry",
+                      date: item.DATE || "Unknown Date",
+                      image:
+                        item.IMAGE_LINK && item.IMAGE_LINK !== "#"
+                          ? item.IMAGE_LINK
+                          : "/logo/notfound.png",
+                    })),
+                  };
+                })
+                .catch((err) => {
+                  console.error(`Error fetching articles for ${l} - ${c}:`, err);
+                  return null;
+                })
+            );
+          }
         }
       }
 
       try {
         let results = await Promise.all(apiCalls);
-
-        // Filter out APIs that returned no data
         results = results.filter((item) => item !== null);
-
-        // Sort by article count (larger datasets first)
         results.sort((a, b) => b.articles.length - a.articles.length);
 
         setArticlesByAPI(results);
@@ -164,7 +214,7 @@ const DynamicArticles = () => {
     >
       <Grid container spacing={2}>
         {articlesByAPI
-          .filter((item) => item.articles && item.articles.length > 0) // Ensure only non-empty APIs are shown
+          .filter((item) => item.articles && item.articles.length > 0)
           .map((item, index) => (
             <Grid item xs={12} sm={6} key={index}>
               <Paper
@@ -175,38 +225,34 @@ const DynamicArticles = () => {
                   overflowY: "auto",
                 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    display: "flex",
-                    gap: 4, 
-                    alignItems: "left",
-                    marginBottom: 2,
-                  }}
-                >
+                <Typography variant="h6" sx={{ display: "flex", gap: 2 }}>
                   <Box
                     sx={{
+                      backgroundColor: "yellow",
                       width: "10px",
                       height: "24px",
-                      backgroundColor: "yellow",
-                      marginRight: 1,
                     }}
                   />
-                  {`Articles for ${item.label} - ${item.classification}`}
+                  {`Articles for ${item.label} - ${item.classification}`}{" "}
+                  {item.arrow && (
+                    <span style={{ color: item.color, fontSize: "18px" }}>
+                      {item.arrow}
+                    </span>
+                  )}
                   <span
                     style={{
                       color: "#fff",
                       fontSize: "16px",
                       fontWeight: "bold",
                     }}
-                  >Total news  :
-                    {item.articles.length} {/* Show total articles count */}
+                  >
+                    Total news: {item.articles.length}
                   </span>
                 </Typography>
 
                 <List
                   opportunities={item.articles}
-                  noDataMessage="No articles available for this category."
+                  noDataMessage="No articles available."
                 />
               </Paper>
             </Grid>
