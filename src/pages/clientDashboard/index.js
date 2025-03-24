@@ -28,24 +28,30 @@ const DynamicArticles = () => {
 
       const { label, classifications } = clientParams;
       const apiCalls = [];
+      for (const l of label) {
 
       // Handle Sentiment separately so it's only called once.
       if (classifications.includes("Sentiment")) {
         // console.log("Fetching Sentiment Data...");
         const sentimentAPIs = [
           {
-            url: `${apiUrl}/sentiment?industry=tech&type=positive`,
+            url: `${apiUrl}/sentiment?label=${encodeURIComponent(
+              l
+            )}&type=positive`,
             type: "Positive Sentiment",
             arrow: "↑",
             color: "#4caf50",
           },
           {
-            url: `${apiUrl}/sentiment?industry=tech&type=negative`,
+            url: `${apiUrl}/sentiment?label=${encodeURIComponent(
+              l
+            )}&type=negative`,
             type: "Negative Sentiment",
             arrow: "↓",
             color: "red",
           },
         ];
+    
 
         sentimentAPIs.forEach(({ url, type, arrow, color }) => {
           apiCalls.push(
@@ -82,7 +88,8 @@ const DynamicArticles = () => {
             }))
           );
         });
-      }
+      }  
+    };
 
       // For other classifications, iterate over each label.
       for (const l of label) {
