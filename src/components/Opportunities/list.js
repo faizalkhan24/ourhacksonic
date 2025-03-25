@@ -1,12 +1,11 @@
 import React from "react";
 import { Box, Typography, Grid, Card, CardContent, CardMedia } from "@mui/material";
 
-const List = ({ title, opportunities, noDataMessage, image }) => {
+const List = ({ title, opportunities, noDataMessage, image, onItemClick }) => {
   return (
     <Box sx={{ marginBottom: 3 }}>
       {/* Title with Yellow Left Bar */}
       <Box sx={{ display: "flex", alignItems: "center" }}>
-       
         <Typography variant="h6" fontWeight="bold" sx={{ color: "#fff" }}>
           {title}
         </Typography>
@@ -46,14 +45,15 @@ const List = ({ title, opportunities, noDataMessage, image }) => {
             opportunities.map((item, index) => (
               <Grid item xs={12} key={index}>
                 <Card
+                  onClick={() => onItemClick && onItemClick(item)}
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     backgroundColor: "#000",
                     color: "#fff",
                     borderBottom: "2px solid #fff",
-                    // padding: 1,
                     minHeight: "100px", // Min height for each card
+                    cursor: onItemClick ? "pointer" : "default",
                   }}
                 >
                   <CardMedia
@@ -64,7 +64,6 @@ const List = ({ title, opportunities, noDataMessage, image }) => {
                       height: 120, // Set fixed height for square aspect
                       border: "2px solid #fff",
                       borderRadius: "8px",
-                      // padding: 1,
                       marginRight: "16px",
                       objectFit: "cover", // Ensures the image covers the area
                     }}

@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Typography, Grid, Paper } from "@mui/material";
-import List from "components/Opportunities/list";
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import List from "components/Opportunities/list"; // Make sure this component supports onItemClick as below
 import Loader from "components/Loader/Loader"; // Adjust path if needed
 
 const DynamicArticles = () => {
   const [articlesByAPI, setArticlesByAPI] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // New state for timeline popup
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [openTimeline, setOpenTimeline] = useState(false);
+
   const apiUrl = process.env.REACT_APP_APIBASEURL;
 
   useEffect(() => {
@@ -28,68 +42,68 @@ const DynamicArticles = () => {
 
       const { label, classifications } = clientParams;
       const apiCalls = [];
+
+      // Loop for each label
       for (const l of label) {
+        // Handle Sentiment separately so it's only called once.
+        if (classifications.includes("Sentiment")) {
+          const sentimentAPIs = [
+            {
+              url: `${apiUrl}/sentiment?label=${encodeURIComponent(
+                l
+              )}&type=positive`,
+              type: "Positive Sentiment",
+              arrow: "↑",
+              color: "#4caf50",
+            },
+            {
+              url: `${apiUrl}/sentiment?label=${encodeURIComponent(
+                l
+              )}&type=negative`,
+              type: "Negative Sentiment",
+              arrow: "↓",
+              color: "red",
+            },
+          ];
 
-      // Handle Sentiment separately so it's only called once.
-      if (classifications.includes("Sentiment")) {
-        // console.log("Fetching Sentiment Data...");
-        const sentimentAPIs = [
-          {
-            url: `${apiUrl}/sentiment?label=${encodeURIComponent(
-              l
-            )}&type=positive`,
-            type: "Positive Sentiment",
-            arrow: "↑",
-            color: "#4caf50",
-          },
-          {
-            url: `${apiUrl}/sentiment?label=${encodeURIComponent(
-              l
-            )}&type=negative`,
-            type: "Negative Sentiment",
-            arrow: "↓",
-            color: "red",
-          },
-        ];
-    
-
-        sentimentAPIs.forEach(({ url, type, arrow, color }) => {
-          apiCalls.push(
-            axios.get(url).then((response) => ({
-              label: type, // using the sentiment type as the label
-              classification: type,
-              arrow,
-              color,
-              articles: response.data.map((item) => ({
-                title: (
-                  <a
-                    href={item.LINK || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      textDecoration: "none",
-                      color: "#fff",
-                      fontWeight: "bold",
-                      
-                    }}
-                  >
-                    {item.TITLE || "No Title"}
-                  </a>
-                ),
-                location: item.LABEL || "No LABEL",
+          sentimentAPIs.forEach(({ url, type, arrow, color }) => {
+            apiCalls.push(
+              axios.get(url).then((response) => ({
+                label: type, // using the sentiment type as the label
                 classification: type,
-                industry: item.INDUSTRY || "Unknown Industry",
-                date: item.DATE || "Unknown Date",
-                image:
-                  item.IMAGE_LINK && item.IMAGE_LINK !== "#"
-                    ? item.IMAGE_LINK
-                    : "/logo/notfound.png",
-              })),
-            }))
-          );
-        });
-      }  
-    };
+                arrow,
+                color,
+                articles: response.data.map((item) => ({
+                  title: (
+                    <a
+                      // href={item.LINK || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        textDecoration: "none",
+                        color: "#fff",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {item.TITLE || "No Title"}
+                    </a>
+                  ),
+                  location: item.LABEL || "No LABEL",
+                  classification: type,
+                  industry: item.INDUSTRY || "Unknown Industry",
+                  date: item.DATE || "Unknown Date",
+                  image:
+                    item.IMAGE_LINK && item.IMAGE_LINK !== "#"
+                      ? item.IMAGE_LINK
+                      : "/logo/notfound.png",
+                  // Added timeline property (expecting an array)
+                  timeline: item.TIMELINE || [],
+                })),
+              }))
+            );
+          });
+        }
+      }
 
       // For other classifications, iterate over each label.
       for (const l of label) {
@@ -120,7 +134,7 @@ const DynamicArticles = () => {
                     articles: uniqueArticles.map((item) => ({
                       title: (
                         <a
-                          href={item.LINK || "#"}
+                          // href={item.LINK || "#"}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
@@ -140,11 +154,16 @@ const DynamicArticles = () => {
                         item.IMAGE_LINK && item.IMAGE_LINK !== "#"
                           ? item.IMAGE_LINK
                           : "/logo/notfound.png",
+                      // Added timeline property
+                      timeline: item.TIMELINE || [],
                     })),
                   };
                 })
                 .catch((err) => {
-                  console.error(`Error fetching articles for ${l} - ${c}:`, err);
+                  console.error(
+                    `Error fetching articles for ${l} - ${c}:`,
+                    err
+                  );
                   return null;
                 })
             );
@@ -192,6 +211,12 @@ const DynamicArticles = () => {
     };
   }, []);
 
+  // Handler for when an article is clicked in the List component
+  const handleArticleClick = (article) => {
+    setSelectedArticle(article);
+    setOpenTimeline(true);
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -232,7 +257,6 @@ const DynamicArticles = () => {
                   backgroundColor: "#000",
                   border: "1px solid #fff",
                   overflowY: "auto",
-                  
                 }}
               >
                 <Typography variant="h6" sx={{ display: "flex", gap: 2 }}>
@@ -253,21 +277,86 @@ const DynamicArticles = () => {
                     style={{
                       color: "#fff",
                       fontSize: "16px",
-                      fontWeight: "bold", 
+                      fontWeight: "bold",
                     }}
                   >
                     {/* Total news: {item.articles.length} */}
                   </span>
                 </Typography>
 
+                {/* Pass onItemClick to List so that clicking an article shows its timeline */}
                 <List
                   opportunities={item.articles}
                   noDataMessage="No articles available."
+                  onItemClick={handleArticleClick}
                 />
               </Paper>
             </Grid>
           ))}
       </Grid>
+
+      {/* Timeline Popup Modal */}
+      <Dialog
+        open={openTimeline}
+        onClose={() => setOpenTimeline(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Timeline</DialogTitle>
+        <DialogContent>
+          {selectedArticle &&
+          selectedArticle.timeline &&
+          Array.isArray(selectedArticle.timeline) &&
+          selectedArticle.timeline.length > 0 ? (
+            selectedArticle.timeline.map((event, idx) => (
+              <Box
+                key={idx}
+                sx={{ mb: 2, display: "flex", alignItems: "center" }}
+              >
+                {event.IMAGE_LINK && event.IMAGE_LINK !== "#" && (
+                  <Box
+                    component="img"
+                    src={event.IMAGE_LINK}
+                    alt={event.TITLE}
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      objectFit: "cover",
+                      mr: 2,
+                    }}
+                  />
+                )}
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                    {event.TITLE}
+                  </Typography>
+                  <Typography variant="body2" color="gray">
+                    {event.LABEL || "No LABEL"}
+                  </Typography>
+                  <Typography variant="body2" color="gray">
+                    {event.CLASSIFICATION || ""}
+                  </Typography>
+                  <a
+                    href={event.LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#4caf50" }}
+                  >
+                    Read more
+                  </a>
+                </Box>
+              </Box>
+            ))
+          ) : (
+            <Typography>No timeline data available.</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenTimeline(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
