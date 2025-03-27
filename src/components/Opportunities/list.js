@@ -25,7 +25,7 @@ const List = ({ title, opportunities, noDataMessage, image, onItemClick }) => {
             width: "8px", // Width of scrollbar
           },
           "&::-webkit-scrollbar-track": {
-            background: "#fff", // Track color (black)
+            background: "#fff", // Track color
           },
           "&::-webkit-scrollbar-thumb": {
             background: "#FFD700", // Thumb color (yellow)
@@ -65,7 +65,7 @@ const List = ({ title, opportunities, noDataMessage, image, onItemClick }) => {
                       border: "2px solid #fff",
                       borderRadius: "8px",
                       marginRight: "16px",
-                      objectFit: "cover", // Ensures the image covers the area
+                      objectFit: "cover",
                     }}
                   />
                   <CardContent>
