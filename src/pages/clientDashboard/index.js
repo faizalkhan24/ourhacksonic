@@ -12,15 +12,21 @@ const DynamicArticles = () => {
   const { articlesByAPI, loading, error } = useArticleFetcher();
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [openTimeline, setOpenTimeline] = useState(false);
-  // Holds search results from SearchBar
   const [searchResults, setSearchResults] = useState(null);
+  const [collapsedSections, setCollapsedSections] = useState({});
+
+  const toggleCollapse = (sectionKey) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey]
+    }));
+  };
 
   const handleArticleClick = (article) => {
     setSelectedArticle(article);
     setOpenTimeline(true);
   };
 
-  // Merge search results into the SPORT - OPPORTUNITY group if available
   const mergedArticles = searchResults
     ? articlesByAPI.map((group) => {
         if (
@@ -48,7 +54,6 @@ const DynamicArticles = () => {
       </Box>
     );
 
-  // Check client parameters for "SPORT" label and "OPPORTUNITY" classification
   let showTShirts = false;
   let showSearchBar = false;
   const clientParamsStr = localStorage.getItem("clientParams");
@@ -70,7 +75,6 @@ const DynamicArticles = () => {
     }
   }
 
-  // Use the mergedArticles instead of articlesByAPI
   const validGroups = mergedArticles.filter(
     (group) => group.articles && group.articles.length > 0
   );
@@ -89,98 +93,105 @@ const DynamicArticles = () => {
     remainingGroups = validGroups.slice(2);
   }
 
+  const renderCollapsibleSection = (content, title, isTShirt = false, group = null) => {
+    const sectionKey = isTShirt ? 'sports-tshirts' : `${group.label}-${group.classification}`;
+    const isCollapsed = collapsedSections[sectionKey];
+
+    return (
+      <Paper
+        sx={{
+          padding: 2,
+          backgroundColor: "#000",
+          border: "1px solid #fff",
+          overflowY: "auto",
+          height: isCollapsed ? 50 : 700,
+          transition: "height 0.3s ease",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            display: "flex",
+            gap: 2,
+            mb: 2,
+            color: "#fff",
+            cursor: "pointer",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+          onClick={() => toggleCollapse(sectionKey)}
+        >
+          <div>
+            {!isTShirt && group?.arrow && (
+              <span style={{ color: group.color, fontSize: "18px" }}>
+                {group.arrow}
+              </span>
+            )}
+            {title}
+          </div>
+          <span>{isCollapsed ? "+" : "-"}</span>
+        </Typography>
+        
+        {!isCollapsed && content}
+      </Paper>
+    );
+  };
+
   return (
     <Box sx={{ backgroundColor: "#000", minHeight: "100vh", padding: 4, overflowY: "auto" }}>
-      {/* Conditionally render the SearchBar */}
       {showSearchBar && (
         <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
           <SearchBar onResults={(data) => setSearchResults(data)} />
         </Box>
       )}
 
-      {/* Top Row */}
       <Grid container spacing={2}>
         {topRowLeft && (
           <Grid item xs={12} md={6}>
-            <Paper
-              sx={{
-                padding: 2,
-                backgroundColor: "#000",
-                border: "1px solid #fff",
-                overflowY: "auto",
-                height: 700,
-              }}
-            >
-              {showTShirts ? (
-                <>{topRowLeft}</>
-              ) : (
-                <>
-                  <Typography variant="h6" sx={{ display: "flex", gap: 2, mb: 2, color: "#fff" }}>
-                    {topRowLeft.arrow && (
-                      <span style={{ color: topRowLeft.color, fontSize: "18px" }}>
-                        {topRowLeft.arrow}
-                      </span>
-                    )}
-                  </Typography>
-                  <ArticleList articlesByAPI={[topRowLeft]} onArticleClick={handleArticleClick} />
-                </>
-              )}
-            </Paper>
+            {showTShirts ? (
+              renderCollapsibleSection(
+                <SportsTShirts />,
+                "Sports T-Shirts",
+                true
+              )
+            ) : (
+              renderCollapsibleSection(
+                <ArticleList articlesByAPI={[topRowLeft]} onArticleClick={handleArticleClick} />,
+                topRowLeft.label || topRowLeft.classification,
+                false,
+                topRowLeft
+              )
+            )}
           </Grid>
         )}
+
         {topRowRight && (
           <Grid item xs={12} md={6}>
-            <Paper
-              sx={{
-                padding: 2,
-                backgroundColor: "#000",
-                border: "1px solid #fff",
-                overflowY: "auto",
-                height: 700,
-              }}
-            >
-              <Typography variant="h6" sx={{ display: "flex", gap: 2, mb: 2, color: "#fff" }}>
-                {topRowRight.arrow && (
-                  <span style={{ color: topRowRight.color, fontSize: "18px" }}>
-                    {topRowRight.arrow}
-                  </span>
-                )}
-              </Typography>
-              <ArticleList articlesByAPI={[topRowRight]} onArticleClick={handleArticleClick} />
-            </Paper>
+            {renderCollapsibleSection(
+              <ArticleList articlesByAPI={[topRowRight]} onArticleClick={handleArticleClick} />,
+              topRowRight.label || topRowRight.classification,
+              false,
+              topRowRight
+            )}
           </Grid>
         )}
       </Grid>
 
-      {/* Remaining Article Groups in a Two-Column Layout */}
       {remainingGroups.length > 0 && (
         <Grid container spacing={2} sx={{ mt: 2 }}>
           {remainingGroups.map((group, index) => (
             <Grid item xs={12} md={6} key={index}>
-              <Paper
-                sx={{
-                  padding: 2,
-                  height: 700,
-                  backgroundColor: "#000",
-                  border: "1px solid #fff",
-                  overflowY: "auto",
-                }}
-              >
-                <Typography variant="h6" sx={{ display: "flex", gap: 2, mb: 2, color: "#fff" }}>
-                  {group.arrow && (
-                    <span style={{ color: group.color, fontSize: "18px" }}>
-                      {group.arrow}
-                    </span>
-                  )}
-                </Typography>
-                <ArticleList articlesByAPI={[group]} onArticleClick={handleArticleClick} />
-              </Paper>
+              {renderCollapsibleSection(
+                <ArticleList articlesByAPI={[group]} onArticleClick={handleArticleClick} />,
+                group.label || group.classification,
+                false,
+                group
+              )}
             </Grid>
           ))}
         </Grid>
       )}
 
-      {/* Timeline Modal for Articles */}
       <ArticleTimelineModal
         open={openTimeline}
         onClose={() => setOpenTimeline(false)}
