@@ -41,7 +41,6 @@ const SportsTShirts = () => {
           axios
             .get(tshirtApiUrl)
             .then((response) => {
-              // Assuming API returns an object with "products" and "oppurtinuty"
               setProducts(response.data.products);
               setOpportunityText(response.data.oppurtinuty || "");
               setLoadingTshirts(false);
