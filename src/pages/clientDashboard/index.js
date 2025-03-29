@@ -28,16 +28,17 @@ const DynamicArticles = () => {
   };
 
   const mergedArticles = searchResults
-    ? articlesByAPI.map((group) => {
-        if (
-          group.label === "SPORT" &&
-          group.classification.toUpperCase() === "OPPORTUNITY"
-        ) {
-          return { ...group, articles: searchResults };
-        }
-        return group;
-      })
-    : articlesByAPI;
+  ? articlesByAPI.map((group) => {
+      if (
+        // group.label === "SPORT" &&
+        group.classification.toUpperCase() === "OPPORTUNITY"
+      ) {
+        return { ...group, articles: searchResults };
+      }
+      return group;
+    })
+  : articlesByAPI;
+
 
   if (loading) return <Loader />;
   if (error)
@@ -54,30 +55,32 @@ const DynamicArticles = () => {
       </Box>
     );
 
-  let showTShirts = false;
-  let showSearchBar = false;
-  const clientParamsStr = localStorage.getItem("clientParams");
-  if (clientParamsStr) {
-    try {
-      const clientParams = JSON.parse(clientParamsStr);
-      if (clientParams.label && Array.isArray(clientParams.label)) {
-        if (clientParams.label.includes("SPORT")) {
-          showTShirts = true;
+    let showTShirts = false;
+    let showSearchBar = false;
+    const clientParamsStr = localStorage.getItem("clientParams");
+    if (clientParamsStr) {
+      try {
+        const clientParams = JSON.parse(clientParamsStr);
+        if (clientParams.label && Array.isArray(clientParams.label)) {
+          if (clientParams.label.includes("SPORT")) {
+            showTShirts = true;
+          }
         }
-      }
-      if (clientParams.classifications && Array.isArray(clientParams.classifications)) {
-        if (clientParams.classifications.includes("OPPORTUNITY")) {
-          showSearchBar = true;
+        if (clientParams.classifications && Array.isArray(clientParams.classifications)) {
+          if (clientParams.classifications.includes("OPPORTUNITY")) {
+            showSearchBar = true;
+          }
         }
+      } catch (e) {
+        console.error("Error parsing clientParams:", e);
       }
-    } catch (e) {
-      console.error("Error parsing clientParams:", e);
     }
-  }
 
   const validGroups = mergedArticles.filter(
     (group) => group.articles && group.articles.length > 0
   );
+
+
 
   let topRowLeft = null;
   let topRowRight = null;
